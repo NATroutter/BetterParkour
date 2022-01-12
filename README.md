@@ -31,6 +31,7 @@ Old version documentation can be found in [ProjectHub](https://hub.nat.gs/index.
     <groupId>net.natroutter</groupId>
     <artifactId>betterparkour</artifactId>
     <version>{VERSION}</version>
+    <scope>provided</scope>
 </dependency>
 ````
 
