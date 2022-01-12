@@ -10,7 +10,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class BetterParkour extends JavaPlugin {
 
-    Handler handler;
+    private Handler handler;
+    private static BetterParkourAPI api;
+
+    public static BetterParkourAPI getAPI() {
+        return api;
+    }
 
     @Override
     public void onEnable() {
@@ -25,6 +30,7 @@ public final class BetterParkour extends JavaPlugin {
 
         map.register("betterparkour", new BetterParkourCMD(handler));
 
+        api = new BetterParkourAPI(handler);
     }
 
     @Override

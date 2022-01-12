@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -51,6 +52,11 @@ public class ParkourHandler {
         p.setGameMode(GameMode.ADVENTURE);
         p.setWalkSpeed(0.2F);
         p.setFlySpeed(0.1F);
+        if (p.getPassengers().size() > 0) {
+            for(Entity ent : p.getPassengers()) {
+                ent.eject();
+            }
+        }
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 100, 1);
 
     }

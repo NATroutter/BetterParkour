@@ -13,6 +13,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -58,11 +60,31 @@ public class ParkourListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
+    public void onVehicleEnter(VehicleEnterEvent e) {
+        if (!(e.getEntered() instanceof Player p)) {
+            return;
+        }
+        if (parkourHandler.inCourse(p)) {
+            e.setCancelled(true);
+            p.sendMessage(lang.Prefix + lang.CantWhileInCourse);
+        } else {
+            if (e.getVehicle().getVehicle() instanceof Player v) {
+                if (parkourHandler.inCourse(v)) {
+                    e.setCancelled(true);
+                    p.sendMessage(lang.Prefix + lang.CantWhileInCourse);
+                }
+            }
+        }
+
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPressurePlate(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (e.getAction() == Action.PHYSICAL) {
             if (!e.hasBlock() || e.getClickedBlock() == null) {return;}
             Location plate = e.getClickedBlock().getLocation();
+            e.setCancelled(true);
 
             if(cooldown.containsKey(p.getUniqueId())) {
                 long secondsLeft = ((cooldown.get(p.getUniqueId())/1000)+1) - (System.currentTimeMillis()/1000);
