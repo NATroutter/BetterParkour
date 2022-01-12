@@ -1,7 +1,6 @@
 package net.natroutter.betterparkour;
 
 import net.natroutter.betterparkour.commands.BetterParkourCMD;
-import net.natroutter.betterparkour.handlers.ParkourHandler;
 import net.natroutter.betterparkour.listeners.ParkourListener;
 import net.natroutter.betterparkour.listeners.WandUseListener;
 import org.bukkit.command.CommandMap;
@@ -11,9 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class BetterParkour extends JavaPlugin {
 
     private Handler handler;
-    private static BetterParkourAPI api;
+    private static ParkourAPI api;
 
-    public static BetterParkourAPI getAPI() {
+    public static ParkourAPI getAPI() {
         return api;
     }
 
@@ -30,7 +29,7 @@ public final class BetterParkour extends JavaPlugin {
 
         map.register("betterparkour", new BetterParkourCMD(handler));
 
-        api = new BetterParkourAPI(handler);
+        api = new ParkourAPI(handler);
     }
 
     @Override

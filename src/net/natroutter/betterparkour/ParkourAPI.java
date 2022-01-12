@@ -8,12 +8,12 @@ import net.natroutter.betterparkour.handlers.ParkourHandler;
 import net.natroutter.betterparkour.handlers.StatisticHandler;
 import org.bukkit.entity.Player;
 
-public class BetterParkourAPI {
+public class ParkourAPI {
 
     private Handler handler;
 
-    public BetterParkourAPI(Handler handler) {
-            this.handler = handler;
+    public ParkourAPI(Handler handler) {
+        this.handler = handler;
     }
 
     public ParkourHandler getParkourHandler() {
