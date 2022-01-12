@@ -3,7 +3,10 @@
 <h1 style="margin: 0px;font-weight: 700;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji">BetterParkour</h1>
 
 ![GitHub](https://img.shields.io/github/license/natroutter/betterparkour?style=for-the-badge)
-![Custom badge](https://img.shields.io/endpoint?color=%2303fc4e&style=for-the-badge&url=https%3A%2F%2Fhub.nat.gs%2Fjavadoc%2Fversion.php%3Fproject%3Dnatlibs)
+![Custom badge](https://img.shields.io/endpoint?color=%2303fc4e&style=for-the-badge&url=https%3A%2F%2Fhub.nat.gs%2Fjavadoc%2Fversion.php%3Fproject%3Dbetterparkour)
+
+![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fhub.nat.gs%2Fjenkins%2Fjob%2FBetterParkour%2F&style=for-the-badge)
+![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/net.natroutter/betterparkour?server=https%3A%2F%2Fhub.nat.gs%2Fnexus%2F&style=for-the-badge)
 
 Simple miencraft parkour plugin
  
@@ -39,7 +42,7 @@ import net.natroutter.betterparkour.ParkourAPI;
 import org.bukkit.Bukkit;
 
 @Override
-public class ExamplePlugin extends JavaPlugin implements NATLibs {
+public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
