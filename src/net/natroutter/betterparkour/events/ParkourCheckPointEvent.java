@@ -17,7 +17,7 @@ public class ParkourCheckPointEvent extends Event {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return null;
+        return HANDLERS;
     }
 
     public ParkourCheckPointEvent(Player player, Course course, Location checkpoint) {
@@ -38,7 +38,4 @@ public class ParkourCheckPointEvent extends Event {
         return checkpoint;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
 }

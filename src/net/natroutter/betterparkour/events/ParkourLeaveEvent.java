@@ -18,7 +18,7 @@ public class ParkourLeaveEvent extends Event {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return null;
+        return HANDLERS;
     }
 
     public ParkourLeaveEvent(Player player, Course course, long startTime) {
@@ -37,10 +37,6 @@ public class ParkourLeaveEvent extends Event {
 
     public long getStartTime() {
         return startTime;
-    }
-
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
     }
 
 }

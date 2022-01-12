@@ -18,7 +18,7 @@ public class ParkourFellOffEvent extends Event {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return null;
+        return HANDLERS;
     }
 
     public ParkourFellOffEvent(Player player, Course course, long startTime, Location lastCheck) {
@@ -44,7 +44,4 @@ public class ParkourFellOffEvent extends Event {
         return lastCheck;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
 }

@@ -19,7 +19,7 @@ public class ParkourFinishedEvent extends Event {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return null;
+        return HANDLERS;
     }
 
     public ParkourFinishedEvent(Player player, Course course, long startTime, long endTime, long timeTook) {
@@ -50,7 +50,4 @@ public class ParkourFinishedEvent extends Event {
         return timeTook;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
 }

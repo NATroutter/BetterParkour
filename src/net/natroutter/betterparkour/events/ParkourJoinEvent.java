@@ -15,7 +15,7 @@ public class ParkourJoinEvent extends Event {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return null;
+        return HANDLERS;
     }
 
     public ParkourJoinEvent(Player player, Course course) {
@@ -31,7 +31,4 @@ public class ParkourJoinEvent extends Event {
         return course;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
 }
