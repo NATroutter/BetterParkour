@@ -40,7 +40,9 @@ Old version documentation can be found in [ProjectHub](https://hub.nat.gs/index.
 ````java
 import net.natroutter.betterparkour.BetterParkour;
 import net.natroutter.betterparkour.ParkourAPI;
+import net.natroutter.betterparkour.events.*;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 
 @Override
 public class ExamplePlugin extends JavaPlugin {
@@ -54,5 +56,50 @@ public class ExamplePlugin extends JavaPlugin {
         }
     }
 
+    //Custom events
+
+    
+    //called when player join parkour course
+    @EventHandler
+    public void onParkourJoin(ParkourJoinEvent e) {}
+
+    //called when player leaves from parkour
+    @EventHandler
+    public void onParkourLeave(ParkourLeaveEvent e) {}
+
+    //called when player finishes parkour course
+    @EventHandler
+    public void onParkourFinished(ParkourFinishedEvent e) {}
+
+    //called when  player activates checkpoint
+    @EventHandler
+    public void onParkourCheckpoint(ParkourCheckPointEvent e) {}
+
+    //called when player fell of the parkour course
+    @EventHandler
+    public void onParkourFinished(ParkourFellOffEvent e) {}
 }
 ````
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

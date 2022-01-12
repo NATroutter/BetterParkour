@@ -2,17 +2,16 @@ package net.natroutter.betterparkour.handlers;
 
 import net.kyori.adventure.text.Component;
 import net.natroutter.betterparkour.Handler;
+import net.natroutter.betterparkour.events.*;
 import net.natroutter.betterparkour.files.Lang;
 import net.natroutter.betterparkour.objs.ActiveCourse;
 import net.natroutter.betterparkour.objs.Course;
 import net.natroutter.betterparkour.objs.Statistic;
 import net.natroutter.natlibs.utilities.StringHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,12 +51,22 @@ public class ParkourHandler {
         p.setGameMode(GameMode.ADVENTURE);
         p.setWalkSpeed(0.2F);
         p.setFlySpeed(0.1F);
+
+        for (ItemStack armor : p.getInventory().getArmorContents()) {
+            if (armor == null) {continue;}
+            if (armor.getType() != Material.AIR) {
+                armor.setAmount(0);
+            }
+        }
+
         if (p.getPassengers().size() > 0) {
             for(Entity ent : p.getPassengers()) {
                 ent.eject();
             }
         }
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 100, 1);
+
+        Bukkit.getPluginManager().callEvent(new ParkourJoinEvent(p, course));
 
     }
 
@@ -66,6 +75,7 @@ public class ParkourHandler {
         ActiveCourse ac = active.get(p.getUniqueId());
         p.teleport(ac.getCourse().getSpawn());
         active.remove(p.getUniqueId());
+        Bukkit.getPluginManager().callEvent(new ParkourLeaveEvent(p, ac.getCourse(), ac.getStartTime()));
     }
 
     public void end(Player p) {
@@ -78,6 +88,8 @@ public class ParkourHandler {
 
         Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), (ac.getEndTime() - ac.getStartTime()));
         statisticHandler.set(stat);
+
+        Bukkit.getPluginManager().callEvent(new ParkourFinishedEvent(p, ac.getCourse(), ac.getStartTime(), ac.getEndTime(), (ac.getEndTime() - ac.getStartTime())));
 
         for (String line : lang.CourseFinished) {
             StringHandler str = new StringHandler(line);
@@ -96,6 +108,8 @@ public class ParkourHandler {
         }
 
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 100, 1);
+
+        Bukkit.getPluginManager().callEvent(new ParkourCheckPointEvent(p, ac.getCourse(), check));
 
         ac.setLastCheck(check);
         active.put(p.getUniqueId(), ac);
@@ -118,6 +132,7 @@ public class ParkourHandler {
                 p.teleport(ac.getCourse().getSpawn());
                 active.remove(p.getUniqueId());
             }
+            Bukkit.getPluginManager().callEvent(new ParkourFellOffEvent(p, ac.getCourse(), ac.getStartTime(), ac.getLastCheck()));
         }
 
 
