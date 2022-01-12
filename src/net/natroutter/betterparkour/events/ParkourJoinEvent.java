@@ -30,4 +30,8 @@ public class ParkourJoinEvent extends Event {
     public Course getCourse() {
         return course;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }

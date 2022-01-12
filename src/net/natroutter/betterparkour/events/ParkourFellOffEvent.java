@@ -43,4 +43,8 @@ public class ParkourFellOffEvent extends Event {
     public Location getLastCheckpoint() {
         return lastCheck;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }

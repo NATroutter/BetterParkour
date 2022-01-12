@@ -39,4 +39,8 @@ public class ParkourLeaveEvent extends Event {
         return startTime;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
 }

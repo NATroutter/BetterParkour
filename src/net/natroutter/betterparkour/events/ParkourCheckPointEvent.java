@@ -37,4 +37,8 @@ public class ParkourCheckPointEvent extends Event {
     public Location getCheckpoint() {
         return checkpoint;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }

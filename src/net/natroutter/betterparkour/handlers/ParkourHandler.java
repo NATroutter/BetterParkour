@@ -34,10 +34,17 @@ public class ParkourHandler {
                 if (!inCourse(p)) {continue;}
                 ActiveCourse ac = active.get(p.getUniqueId());
                 StringHandler bar = new StringHandler(lang.ActionBar);
+                long time = (System.currentTimeMillis() - ac.getStartTime());
+
                 bar.replaceAll("%name%", ac.getCourse().getName());
                 bar.replaceAll("%diff%", ac.getCourse().getDiff());
-                bar.replaceAll("%time%", (System.currentTimeMillis() - ac.getStartTime()));
+                bar.replaceAll("%time%", time);
                 p.sendActionBar(Component.text(bar.build()));
+
+                if (time >= 86400000) { //leaves from parkour if more than 24h
+                    leave(p);
+                }
+
             }
         }, 0, 5);
 

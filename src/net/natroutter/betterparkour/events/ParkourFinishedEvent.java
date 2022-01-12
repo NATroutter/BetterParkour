@@ -49,4 +49,8 @@ public class ParkourFinishedEvent extends Event {
     public long getTimeTook() {
         return timeTook;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }
