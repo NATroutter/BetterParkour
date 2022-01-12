@@ -20,6 +20,10 @@ public class ParkourCheckPointEvent extends Event {
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public ParkourCheckPointEvent(Player player, Course course, Location checkpoint) {
         this.player = player;
         this.course = course;

@@ -18,6 +18,10 @@ public class ParkourJoinEvent extends Event {
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public ParkourJoinEvent(Player player, Course course) {
         this.player = player;
         this.course = course;

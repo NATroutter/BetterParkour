@@ -21,6 +21,10 @@ public class ParkourFellOffEvent extends Event {
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public ParkourFellOffEvent(Player player, Course course, long startTime, Location lastCheck) {
         this.player = player;
         this.course = course;

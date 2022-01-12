@@ -22,6 +22,10 @@ public class ParkourFinishedEvent extends Event {
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public ParkourFinishedEvent(Player player, Course course, long startTime, long endTime, long timeTook) {
         this.player = player;
         this.course = course;

@@ -21,6 +21,10 @@ public class ParkourLeaveEvent extends Event {
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public ParkourLeaveEvent(Player player, Course course, long startTime) {
         this.player = player;
         this.course = course;
