@@ -1,11 +1,11 @@
 package net.natroutter.betterparkour.listeners;
 
 import net.natroutter.betterparkour.Handler;
-import net.natroutter.betterparkour.files.Lang;
+import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.handlers.Courses;
 import net.natroutter.betterparkour.handlers.ParkourHandler;
 import net.natroutter.betterparkour.objs.Course;
-import org.bukkit.Bukkit;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class ParkourListener implements Listener {
 
     private Courses courses;
     private ParkourHandler parkourHandler;
-    private Lang lang;
+    private LangManager lang;
 
     public HashMap<UUID, Long> cooldown = new HashMap<>();
 
@@ -54,7 +53,7 @@ public class ParkourListener implements Listener {
         if (parkourHandler.inCourse(p)) {
             if (!cmd.startsWith("/bp") && !cmd.startsWith("/betterparkour")) {
                 e.setCancelled(true);
-                p.sendMessage(lang.Prefix + lang.CantWhileInCourse);
+                lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
             }
         }
     }
@@ -66,12 +65,12 @@ public class ParkourListener implements Listener {
         }
         if (parkourHandler.inCourse(p)) {
             e.setCancelled(true);
-            p.sendMessage(lang.Prefix + lang.CantWhileInCourse);
+            lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
         } else {
             if (e.getVehicle().getVehicle() instanceof Player v) {
                 if (parkourHandler.inCourse(v)) {
                     e.setCancelled(true);
-                    p.sendMessage(lang.Prefix + lang.CantWhileInCourse);
+                    lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
                 }
             }
         }
@@ -107,7 +106,7 @@ public class ParkourListener implements Listener {
         } else {
             if (parkourHandler.inCourse(p)) {
                 e.setCancelled(true);
-                p.sendMessage(lang.Prefix + lang.CantWhileInCourse);
+                lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
             }
         }
 

@@ -1,10 +1,9 @@
 package net.natroutter.betterparkour.listeners;
 
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.natroutter.betterparkour.Handler;
-import net.natroutter.betterparkour.files.Lang;
 import net.natroutter.betterparkour.handlers.CourseBuilder;
 import net.natroutter.betterparkour.items.GeneralItems;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,13 +16,11 @@ import org.bukkit.inventory.ItemStack;
 public class WandUseListener implements Listener {
 
     Handler handler;
-    Lang lang;
     GeneralItems items;
     CourseBuilder course;
 
     public WandUseListener(Handler handler) {
         this.handler = handler;
-        this.lang = handler.getLang();
         this.items = handler.getItems();
         this.course = handler.getCourseBuilder();
     }

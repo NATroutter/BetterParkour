@@ -1,8 +1,9 @@
 name: BetterParkour
 version: '${project.version}'
 main: net.natroutter.betterparkour.BetterParkour
-api-version: 1.17
+api-version: 1.18
 authors: [NATroutter]
 description: Simple parkour plugin
 website: https://NATroutter.net
+depend: [NATLibs]
 softdepend: [HolographicDisplays]

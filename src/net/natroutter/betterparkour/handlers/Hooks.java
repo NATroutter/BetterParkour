@@ -12,8 +12,8 @@ public class Hooks {
 
     public Hooks(JavaPlugin pl) {
         HookSettings set = new HookSettings();
-        set.setHookedMessage("  §9+ §b{plugin} Hooked succesfully!");
-        set.setHookingFailedMessage("  §9- b7{plugin} Failed to hook!");
+        set.setHookedMessage("  §9+ §b{plugin} §7Hooked succesfully!");
+        set.setHookingFailedMessage("  §9- §b{plugin} §7Failed to hook!");
         set.setDisableMessage("§7Disabling plugin because plugin hooking failed");
         set.disableWhenFailed();
 

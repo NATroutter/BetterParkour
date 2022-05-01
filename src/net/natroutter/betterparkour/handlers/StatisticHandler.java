@@ -24,7 +24,6 @@ public class StatisticHandler {
     private Courses courses;
 
     ConcurrentHashMap<String, Statistic> statisticCache = new ConcurrentHashMap<>();
-
     ConcurrentHashMap<UUID, List<Statistic>> statisticTop = new ConcurrentHashMap<>();
 
     public StatisticHandler(Handler handler) {
@@ -35,40 +34,36 @@ public class StatisticHandler {
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(handler.getInstance(), ()->{
             if (Bukkit.getOnlinePlayers().size() > 0) {
-
-                save(false);
-
+                save(true);
             }
-        }, 20*60*5, 20*60*5);
+        }, 0, 20*60*5);
     }
 
-    public void save(boolean serverClosing) {save(serverClosing, (b)->{});}
-    public void save(boolean serverClosing, Consumer<Boolean> consumer) {
-        database.saveBatch(statisticCache, !serverClosing, (b)->{
-            if (!serverClosing) {
-
-                for (Course course : courses.getCourses()) {
-                    database.getTop10(course.getId(), list -> {
-                        if (list != null) {
-                            statisticTop.put(course.getId(), list);
-                        } else {
-                            handler.console("§9[BetterParkour][Database] §bDatabase returned null list! (1)");
-                        }
-                    });
-                }
-                Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-                List<UUID> uuids = players.stream().flatMap(p -> Stream.of(p.getUniqueId())).toList();
-
-                statisticCache.entrySet().stream().filter((entry) -> !uuids.contains(entry.getValue().getPlayerID())).forEach(entry -> {
-                    statisticCache.remove(entry.getKey());
+    public void save(boolean async) {save(async, (b)->{});}
+    public void save(boolean async, Consumer<Boolean> consumer) {
+        database.saveBatch(statisticCache, async, (b)->{
+            for (Course course : courses.getCourses()) {
+                database.getTop10(course.getId(), list -> {
+                    if (list != null) {
+                        statisticTop.put(course.getId(), list);
+                    } else {
+                        handler.console("§9[BetterParkour][Database] §bDatabase returned null list! (1)");
+                    }
                 });
-
-                consumer.accept(true);
-            } else {
-                consumer.accept(true);
             }
+            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+            List<UUID> uuids = players.stream().flatMap(p -> Stream.of(p.getUniqueId())).toList();
+
+            statisticCache.entrySet().stream().filter((entry) -> !uuids.contains(entry.getValue().getPlayerID())).forEach(entry -> {
+                statisticCache.remove(entry.getKey());
+            });
+            consumer.accept(true);
         });
 
+    }
+
+    public void remove(UUID playerID, UUID courseID) {
+        database.deleteStats(playerID, courseID);
     }
 
     public void set(Statistic stat) {

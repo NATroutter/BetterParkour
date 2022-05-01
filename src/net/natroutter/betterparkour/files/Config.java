@@ -10,12 +10,14 @@ public class Config {
         this.mySQL = new MySQL();
     }
 
+    public String language = "en_us";
+
     public class MySQL {
-        private String host = "localhost";
+        private String host = "";
         private Integer port = 3306;
-        private String user = "root";
-        private String pass = "mypassword";
-        private String database = "betterparkour";
+        private String user = "";
+        private String pass = "";
+        private String database = "";
 
         public String getHost() {return host;}
         public Integer getPort() {return port;}

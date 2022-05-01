@@ -1,25 +1,28 @@
 package net.natroutter.betterparkour;
 
 import net.natroutter.betterparkour.files.Config;
-import net.natroutter.betterparkour.files.Lang;
+import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.handlers.*;
 import net.natroutter.betterparkour.items.GeneralItems;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-import net.natroutter.natlibs.handlers.FileManager;
-import net.natroutter.natlibs.objects.ConfType;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
+import net.natroutter.natlibs.handlers.LangHandler.language.Language;
+import net.natroutter.natlibs.handlers.LangHandler.language.key.LanguageKey;
+import net.natroutter.natlibs.handlers.configuration.ConfigManager;
 import net.natroutter.natlibs.utilities.MojangAPI;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+
+import java.util.Optional;
 
 public class Handler {
 
     private BetterParkour instance;
     private Hooks hooks;
-    private Lang lang;
+    private LangManager lang;
     private Config config;
     private GeneralItems items;
     private YamlDatabase yaml;
@@ -32,25 +35,35 @@ public class Handler {
     private MojangAPI mojangAPI;
     private TopHologramHandler topHologramHandler;
 
-    public BetterParkour getInstance() {return instance;}
-    public Hooks getHooks() {return hooks;}
-    public Lang getLang() {return lang;}
     public Config getConfig() {return config;}
-    public YamlDatabase getYaml() {return yaml;}
-    public Utilities getUtil() {return util;}
-    public CourseBuilder getCourseBuilder() {return courseBuilder;}
-    public Courses getCourses() {return courses;}
-    public ParkourHandler getParkourHandler() {return parkourHandler;}
     public Database getDatabase() {return database;}
+    public BetterParkour getInstance() {return instance;}
+    public Courses getCourses() {return courses;}
+    public CourseBuilder getCourseBuilder() {return courseBuilder;}
+    public Hooks getHooks() {return hooks;}
+    public ParkourHandler getParkourHandler() {return parkourHandler;}
     public StatisticHandler getStatisticHandler() {return statisticHandler;}
-    public MojangAPI getMojangAPI() {return mojangAPI;}
+    public LangManager getLang() {return lang;}
     public TopHologramHandler getTopHologramHandler() {return topHologramHandler;}
-
+    public MojangAPI getMojangAPI() {return mojangAPI;}
+    public Utilities getUtil() {return util;}
+    public YamlDatabase getYaml() {return yaml;}
     public GeneralItems getItems() {return items;}
 
     public Handler(BetterParkour instance) {
         PluginDescriptionFile pdf = instance.getDescription();
         ConsoleCommandSender console = Bukkit.getConsoleSender();
+
+        this.config = new ConfigManager(instance).load(Config.class);
+
+        Optional<Language> language = Language.getFromKey(LanguageKey.of(config.language));
+        this.lang = language.map(value -> new LangManager(instance, value)).orElseGet(() -> {
+            console.sendMessage("§4["+instance.getName()+"][Lang] §cLanguage file defined in config not found, Using default!");
+            return new LangManager(instance, Language.ENGLISH);
+        });
+
+        this.yaml = new YamlDatabase(instance);
+
         console.sendMessage("§8─────────────────────────────────────────");
         console.sendMessage("§8┌[ §9BetterParkour §bv"+pdf.getVersion()+" §9Enabled §8]");
         console.sendMessage("§8├ §7Plugin by: §bNATroutter");
@@ -61,24 +74,16 @@ public class Handler {
 
         this.instance = instance;
         this.util = new Utilities(instance);
-
-        this.lang = new FileManager(instance, ConfType.Lang).load(Lang.class);
-        this.config = new FileManager(instance, ConfType.Config).load(Config.class);
-        this.yaml = new YamlDatabase(instance);
-
         this.items = new GeneralItems(this);
-
         this.mojangAPI = new MojangAPI(instance);
 
         this.database = new Database(this);
+        if (!database.isValid()){return;}
 
         this.courses = new Courses(this);
-
         this.statisticHandler = new StatisticHandler(this);
         this.parkourHandler = new ParkourHandler(this);
-
         this.topHologramHandler = new TopHologramHandler(this);
-
         this.courseBuilder = new CourseBuilder(this);
 
     }
@@ -91,7 +96,7 @@ public class Handler {
         if (p.hasPermission("betterparkour." + perm)) {
             return true;
         }
-        p.sendMessage(lang.Prefix + lang.NoPerm);
+        lang.send(p, Translations.Prefix, Translations.NoPerm);
         return false;
     }
 

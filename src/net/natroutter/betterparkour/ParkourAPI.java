@@ -1,12 +1,11 @@
 package net.natroutter.betterparkour;
 
 import net.natroutter.betterparkour.files.Config;
-import net.natroutter.betterparkour.files.Lang;
 import net.natroutter.betterparkour.handlers.CourseBuilder;
 import net.natroutter.betterparkour.handlers.Courses;
 import net.natroutter.betterparkour.handlers.ParkourHandler;
 import net.natroutter.betterparkour.handlers.StatisticHandler;
-import org.bukkit.entity.Player;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 
 public class ParkourAPI {
 
@@ -30,7 +29,7 @@ public class ParkourAPI {
 
     public CourseBuilder getCourseBuilder() {return handler.getCourseBuilder();}
 
-    public Lang getLang() {return handler.getLang();}
+    public LangManager getLang() {return handler.getLang();}
 
     public Config getConfig() {return handler.getConfig();}
 

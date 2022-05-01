@@ -3,10 +3,11 @@ package net.natroutter.betterparkour.handlers;
 import net.kyori.adventure.text.Component;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.events.*;
-import net.natroutter.betterparkour.files.Lang;
+import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.objs.ActiveCourse;
 import net.natroutter.betterparkour.objs.Course;
 import net.natroutter.betterparkour.objs.Statistic;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -15,11 +16,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ParkourHandler {
 
     private Handler handler;
-    private Lang lang;
+    private LangManager lang;
     private StatisticHandler statisticHandler;
 
     public ConcurrentHashMap<UUID, ActiveCourse> active = new ConcurrentHashMap<>();
@@ -33,12 +35,18 @@ public class ParkourHandler {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (!inCourse(p)) {continue;}
                 ActiveCourse ac = active.get(p.getUniqueId());
-                StringHandler bar = new StringHandler(lang.ActionBar);
+                StringHandler bar = new StringHandler(lang.get(Translations.ActionBar));
                 long time = (System.currentTimeMillis() - ac.getStartTime());
 
                 bar.replaceAll("%name%", ac.getCourse().getName());
                 bar.replaceAll("%diff%", ac.getCourse().getDiff());
-                bar.replaceAll("%time%", time);
+
+                long secs = TimeUnit.MILLISECONDS.toSeconds(time);
+                long mills = time - (secs * 1000);
+
+                bar.replaceAll("%secs%", secs);
+                bar.replaceAll("%mills%", mills);
+
                 p.sendActionBar(Component.text(bar.build()));
 
                 if (time >= 86400000) { //leaves from parkour if more than 24h
@@ -58,6 +66,9 @@ public class ParkourHandler {
         p.setGameMode(GameMode.ADVENTURE);
         p.setWalkSpeed(0.2F);
         p.setFlySpeed(0.1F);
+        if (p.getVehicle() != null) {
+            p.getVehicle().eject();
+        }
 
         for (ItemStack armor : p.getInventory().getArmorContents()) {
             if (armor == null) {continue;}
@@ -98,11 +109,18 @@ public class ParkourHandler {
 
         Bukkit.getPluginManager().callEvent(new ParkourFinishedEvent(p, ac.getCourse(), ac.getStartTime(), ac.getEndTime(), (ac.getEndTime() - ac.getStartTime())));
 
-        for (String line : lang.CourseFinished) {
+        for (String line : lang.getList(Translations.CourseFinished)) {
             StringHandler str = new StringHandler(line);
             str.replaceAll("%courseName%", ac.getCourse().getName());
             str.replaceAll("%diff%", ac.getCourse().getDiff());
-            str.replaceAll("%courseTime%", (ac.getEndTime() - ac.getStartTime()));
+
+            long time = (ac.getEndTime() - ac.getStartTime());
+            long secs = TimeUnit.MILLISECONDS.toSeconds(time);
+            long mills = time - (secs * 1000);
+
+            str.replaceAll("%secs%", secs);
+            str.replaceAll("%mills%", mills);
+
             str.send(p);
         }
     }
@@ -134,7 +152,7 @@ public class ParkourHandler {
         if (!ac.getCourse().getArena().contains(p.getLocation())) {
             if (ac.getLastCheck() != null) {
                 p.teleport(ac.getLastCheck());
-                p.sendMessage(lang.Prefix + lang.LeaveInfoMessage);
+                lang.send(p, Translations.Prefix, Translations.LeaveInfoMessage);
             } else {
                 p.teleport(ac.getCourse().getSpawn());
                 active.remove(p.getUniqueId());

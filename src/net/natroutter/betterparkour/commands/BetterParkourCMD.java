@@ -1,11 +1,11 @@
 package net.natroutter.betterparkour.commands;
 
 import net.natroutter.betterparkour.Handler;
-import net.natroutter.betterparkour.files.Lang;
+import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.handlers.CourseBuilder;
 import net.natroutter.betterparkour.handlers.ParkourHandler;
-import net.natroutter.betterparkour.objs.Statistic;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -19,7 +19,7 @@ import java.util.*;
 public class BetterParkourCMD extends Command {
 
     private Handler handler;
-    private Lang lang;
+    private LangManager lang;
     private CourseBuilder course;
     private YamlDatabase yaml;
     private ParkourHandler parkourHandler;
@@ -37,25 +37,25 @@ public class BetterParkourCMD extends Command {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player p)) {
-            sender.sendMessage(lang.Prefix + lang.OnlyIngame);
+            lang.send(sender, Translations.Prefix, Translations.OnlyIngame);
             return false;
         }
 
         if (args.length == 0) {
-            p.sendMessage(lang.Prefix + lang.WrongCommandUsage);
+            lang.send(p, Translations.Prefix, Translations.WrongCommandUsage);
         } else if (args.length == 1) {
 
             if (args[0].equalsIgnoreCase("help")) {
                 if (!handler.hasPerm(p, "help")) {return false;}
-                lang.helpMessage.forEach(p::sendMessage);
+                lang.sendList(p, Translations.HelpMessage);
 
             } else if (args[0].equalsIgnoreCase("leave")) {
                 if (!handler.hasPerm(p, "leave")) {return false;}
                 if (parkourHandler.inCourse(p)) {
-                    p.sendMessage(lang.Prefix + lang.LeaveMessage);
+                    lang.send(p, Translations.Prefix, Translations.LeaveMessage);
                     parkourHandler.leave(p);
                 } else {
-                    p.sendMessage(lang.Prefix + lang.NotInCourse);
+                    lang.send(p, Translations.Prefix, Translations.NotInCourse);
                 }
 
 
@@ -64,7 +64,7 @@ public class BetterParkourCMD extends Command {
                 course.printCourses(p);
 
             } else {
-                p.sendMessage(lang.Prefix + lang.InvalidArgs);
+                lang.send(p, Translations.Prefix, Translations.InvalidArgs);
             }
 
         } else if (args.length == 2) {
@@ -111,70 +111,122 @@ public class BetterParkourCMD extends Command {
                     course.setSpawn(p, p.getLocation());
 
                 } else {
-                    p.sendMessage(lang.Prefix + lang.InvalidArgs);
+                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
                 }
 
             } else if (args[0].equalsIgnoreCase("stats")) {
                 if (!handler.hasPerm(p, "stats")) {return false;}
 
                 if (args[1].equalsIgnoreCase("save")) {
-                    if (!handler.hasPerm(p, "stats.save")) {return false;}
+                    if (!handler.hasPerm(p, "stats.save")) {
+                        return false;
+                    }
 
-                    handler.getStatisticHandler().save(false);
+                    handler.getStatisticHandler().save(true);
                     handler.getTopHologramHandler().loadHolograms();
-                    p.sendMessage(lang.Prefix + lang.StatisticsSaved);
+                    lang.send(p, Translations.Prefix, Translations.StatisticsSaved);
 
                 } else {
-                    p.sendMessage(lang.Prefix + lang.InvalidArgs);
+                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
                 }
 
             } else {
-                p.sendMessage(lang.Prefix + lang.InvalidArgs);
+                lang.send(p, Translations.Prefix, Translations.InvalidArgs);
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!handler.hasPerm(p, "setup")) {return false;}
+                if (!handler.hasPerm(p, "setup")) {
+                    return false;
+                }
 
                 if (args[1].equalsIgnoreCase("difficulty")) {
-                    if (!handler.hasPerm(p, "setup.difficulty")) {return false;}
+                    if (!handler.hasPerm(p, "setup.difficulty")) {
+                        return false;
+                    }
                     String name = args[2].replaceAll("_", " ");
                     course.setDiff(p, name);
 
                 } else if (args[1].equalsIgnoreCase("rename")) {
-                    if (!handler.hasPerm(p, "setup.rename")) {return false;}
+                    if (!handler.hasPerm(p, "setup.rename")) {
+                        return false;
+                    }
                     String name = args[2].replaceAll("_", " ");
                     course.setName(p, name);
 
                 } else {
-                    p.sendMessage(lang.Prefix + lang.InvalidArgs);
+                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
                 }
             } else if (args[0].equalsIgnoreCase("course")) {
-                if (!handler.hasPerm(p, "course")) {return false;}
+                if (!handler.hasPerm(p, "course")) {
+                    return false;
+                }
 
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!handler.hasPerm(p, "course.remove")) {return false;}
+                    if (!handler.hasPerm(p, "course.remove")) {
+                        return false;
+                    }
                     String name = args[2].replaceAll("_", " ");
                     course.remove(p, name);
 
                 } else if (args[1].equalsIgnoreCase("create")) {
-                    if (!handler.hasPerm(p, "course.create")) {return false;}
+                    if (!handler.hasPerm(p, "course.create")) {
+                        return false;
+                    }
                     String name = args[2].replaceAll("_", " ");
                     course.create(p, name);
 
                 } else if (args[1].equalsIgnoreCase("edit")) {
-                    if (!handler.hasPerm(p, "course.edit")) {return false;}
+                    if (!handler.hasPerm(p, "course.edit")) {
+                        return false;
+                    }
                     String name = args[2].replaceAll("_", " ");
                     course.edit(p, name);
 
                 } else {
-                    p.sendMessage(lang.Prefix + lang.InvalidArgs);
+                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
                 }
 
             } else {
-                p.sendMessage(lang.Prefix + lang.InvalidArgs);
+                lang.send(p, Translations.Prefix, Translations.InvalidArgs);
             }
+        } else if (args.length == 4) {
+
+            if (args[0].equalsIgnoreCase("stats")) {
+                if (!handler.hasPerm(p, "stats")) {return false;}
+
+                if (args[1].equalsIgnoreCase("remove")) {
+                    if (!handler.hasPerm(p, "stats.remove")) {return false;}
+
+                    OfflinePlayer ofp = Bukkit.getOfflinePlayerIfCached(args[2]);
+                    if (ofp == null) {
+                        lang.send(p, Translations.Prefix, Translations.InvalidPlayer);
+                        return false;
+                    }
+
+                    Set<String> keys = yaml.getKeys("courses");
+                    String courseName = args[3].replaceAll("_", " ");
+                    UUID selected = null;
+                    for (String key : keys) {
+                        if (yaml.getString("courses", key + ".name").equalsIgnoreCase(courseName)) {
+                            selected = UUID.fromString(key);
+                        }
+                    }
+                    if (selected == null) {
+                        lang.send(p, Translations.Prefix, Translations.InvalidCourse);
+                        return false;
+                    }
+
+
+                    handler.getStatisticHandler().remove(ofp.getUniqueId(), selected);
+                    handler.getStatisticHandler().save(true);
+                    handler.getTopHologramHandler().loadHolograms();
+                    lang.send(p, Translations.Prefix, Translations.StatisticsRemoved);
+                }
+
+            }
+
         } else {
-            p.sendMessage(lang.Prefix + lang.TooManyArguments);
+            lang.send(p, Translations.Prefix, Translations.TooManyArguments);
         }
         return false;
     }
@@ -247,6 +299,7 @@ public class BetterParkourCMD extends Command {
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
                     if (handler.hasPerm(sender, "stats.save")) {add("save");}
+                    if (handler.hasPerm(sender, "stats.remove")) {add("remove");}
                 }}, shorted);
                 Collections.sort(shorted);
                 return shorted;
@@ -267,6 +320,16 @@ public class BetterParkourCMD extends Command {
                     return Collections.singletonList("<text (use _ as space)>");
                 } else {
                     return null;
+                }
+            } else if (args[0].equalsIgnoreCase("stats")) {
+                if (args[1].equalsIgnoreCase("remove")) {
+                    if (!handler.hasPerm(sender, "stats.remove")) {return null;}
+
+                    List<String> shorted = new ArrayList<>();
+                    StringUtil.copyPartialMatches(args[2], playerNames(), shorted);
+                    Collections.sort(shorted);
+                    return shorted;
+
                 }
             } else if (args[0].equalsIgnoreCase("course")) {
                 if (!handler.hasPerm(sender, "course")) {return null;}
@@ -293,6 +356,27 @@ public class BetterParkourCMD extends Command {
                     return Collections.singletonList("<name (use _ as space)>");
                 } else {
                     return null;
+                }
+            }
+        } else if (args.length == 4) {
+            if (args[0].equalsIgnoreCase("stats")) {
+                if (args[1].equalsIgnoreCase("remove")) {
+                    if (!handler.hasPerm(sender, "stats.remove")) {return null;}
+
+                    Set<String> keys = yaml.getKeys("courses");
+                    if (keys != null) {
+                        List<String> items = new ArrayList<>();
+                        for (String key : keys) {
+                            items.add(yaml.getString("courses." + key, "name").replaceAll(" ", "_"));
+                        }
+
+                        List<String> shorted = new ArrayList<>();
+                        StringUtil.copyPartialMatches(args[3], items, shorted);
+                        Collections.sort(shorted);
+                        return shorted;
+                    }
+                    return Collections.singletonList("<name (use _ as space)>");
+
                 }
             }
         }

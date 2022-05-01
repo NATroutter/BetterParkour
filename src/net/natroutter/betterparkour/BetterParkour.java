@@ -1,5 +1,6 @@
 package net.natroutter.betterparkour;
 
+import net.natroutter.NATLibs.bstats.bukkit.Metrics;
 import net.natroutter.betterparkour.commands.BetterParkourCMD;
 import net.natroutter.betterparkour.listeners.ParkourListener;
 import net.natroutter.betterparkour.listeners.WandUseListener;
@@ -20,6 +21,7 @@ public final class BetterParkour extends JavaPlugin {
     public void onEnable() {
 
         handler = new Handler(this);
+        if (!handler.getDatabase().isValid()){return;}
 
         PluginManager pm = getServer().getPluginManager();
         CommandMap map = getServer().getCommandMap();
@@ -29,11 +31,15 @@ public final class BetterParkour extends JavaPlugin {
 
         map.register("betterparkour", new BetterParkourCMD(handler));
 
+        new Metrics(this, 15081);
+
         api = new ParkourAPI(handler);
     }
 
     @Override
     public void onDisable() {
-        handler.getStatisticHandler().save(true);
+        if (handler != null) {
+            handler.getStatisticHandler().save(false);
+        }
     }
 }

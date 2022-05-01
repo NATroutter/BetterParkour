@@ -2,10 +2,12 @@ package net.natroutter.betterparkour.handlers;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariPool;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Config;
 import net.natroutter.betterparkour.objs.Statistic;
 import net.natroutter.natlibs.utilities.MojangAPI;
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,6 +20,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Database {
 
@@ -27,25 +31,35 @@ public class Database {
     private MojangAPI mojangAPI;
     private boolean valid = false;
 
+    public boolean isValid() {
+        return valid;
+    }
+
     public Database(Handler handler) {
         this.plugin = handler.getInstance();
         this.mojangAPI = handler.getMojangAPI();
         Config.MySQL cfg = handler.getConfig().getMySQL();
 
-        try {
-            this.hikConfig = new HikariConfig();
-            this.hikConfig.setJdbcUrl("jdbc:mysql://" + cfg.getHost() + ":" + cfg.getPort() + "/" + cfg.getDatabase());
-            this.hikConfig.setUsername(cfg.getUser());
-            this.hikConfig.setPassword(cfg.getPass());
-            this.hikConfig.addDataSourceProperty("cachePrepStmts", "true");
-            this.hikConfig.addDataSourceProperty("prepStmtCacheSize", "250");
-            this.hikConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            this.hikConfig.setConnectionTimeout(1000);
-            this.hikConfig.setPoolName("BetterParkour_Pool");
-            this.hikData = new HikariDataSource(this.hikConfig);
-            this.valid = true;
-        } catch (Exception ignore) {
-            plugin.getLogger().warning("[Database] Database connection failed!");
+        if (cfg.getHost().length() > 2 && cfg.getPort().toString().length() > 1 && cfg.getDatabase().length() > 2) {
+            try {
+                this.hikConfig = new HikariConfig();
+                this.hikConfig.setJdbcUrl("jdbc:mysql://" + cfg.getHost() + ":" + cfg.getPort() + "/" + cfg.getDatabase());
+                this.hikConfig.setUsername(cfg.getUser());
+                this.hikConfig.setPassword(cfg.getPass());
+                this.hikConfig.addDataSourceProperty("cachePrepStmts", "true");
+                this.hikConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+                this.hikConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+                this.hikConfig.setConnectionTimeout(1000);
+                this.hikConfig.setPoolName("BetterParkour_Pool");
+                this.hikData = new HikariDataSource(this.hikConfig);
+                this.valid = true;
+            } catch (Exception ignore) {
+                plugin.getLogger().warning("[Database] Database connection failed!");
+                Bukkit.getPluginManager().disablePlugin(plugin);
+                return;
+            }
+        } else {
+            plugin.getLogger().warning("[Database] Database is not configured!");
             Bukkit.getPluginManager().disablePlugin(plugin);
             return;
         }
@@ -97,6 +111,23 @@ public class Database {
         consumer.accept(false);
     }
 
+    public void deleteStats(UUID playerID, UUID courseID) {
+        if (!valid) {return;}
+
+        String sql = "DELETE FROM stats WHERE playerID = ? AND courseID = ?";
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, ()->{
+            try (Connection con = hikData.getConnection(); PreparedStatement st = con.prepareStatement(sql)) {
+                st.setString(1, playerID.toString());
+                st.setString(2, courseID.toString());
+                st.executeUpdate();
+            } catch (Exception e) {
+                plugin.getLogger().info("[Database] Failed to delete statistics!");
+                e.printStackTrace();
+            }
+        });
+    }
+
     public void getTop10(UUID courseID, Consumer<List<Statistic>> consumer) {
         if (!valid) {return;}
 
@@ -131,7 +162,6 @@ public class Database {
         String sql = "DELETE FROM stats WHERE courseID = ?";
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, ()->{
-            List<Statistic> top = new ArrayList<>();
             try (Connection con = hikData.getConnection(); PreparedStatement st = con.prepareStatement(sql)) {
                 st.setString(1, courseID.toString());
                 st.executeUpdate();

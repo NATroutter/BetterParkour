@@ -1,6 +1,7 @@
 package net.natroutter.betterparkour.items;
 
 import net.natroutter.betterparkour.Handler;
+import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.natlibs.objects.BaseItem;
 import org.bukkit.Material;
 
@@ -14,8 +15,8 @@ public class GeneralItems {
 
     public BaseItem wand() {
         BaseItem item = new BaseItem(Material.STICK);
-        item.setDisplayName(handler.getLang().getWand().name);
-        item.setLore(handler.getLang().getWand().lore);
+        item.setDisplayName(handler.getLang().get(Translations.Wand_Name));
+        item.setLore(handler.getLang().get(Translations.Wand_Lore));
         return item;
     }
 
