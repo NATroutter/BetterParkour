@@ -42,21 +42,23 @@ public class StatisticHandler {
     public void save(boolean async) {save(async, (b)->{});}
     public void save(boolean async, Consumer<Boolean> consumer) {
         database.saveBatch(statisticCache, async, (b)->{
-            for (Course course : courses.getCourses()) {
-                database.getTop10(course.getId(), list -> {
-                    if (list != null) {
-                        statisticTop.put(course.getId(), list);
-                    } else {
-                        handler.console("§9[BetterParkour][Database] §bDatabase returned null list! (1)");
-                    }
+            if (async) {
+                for (Course course : courses.getCourses()) {
+                    database.getTop10(course.getId(), list -> {
+                        if (list != null) {
+                            statisticTop.put(course.getId(), list);
+                        } else {
+                            handler.console("§9[BetterParkour][Database] §bDatabase returned null list! (1)");
+                        }
+                    });
+                }
+                Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+                List<UUID> uuids = players.stream().flatMap(p -> Stream.of(p.getUniqueId())).toList();
+
+                statisticCache.entrySet().stream().filter((entry) -> !uuids.contains(entry.getValue().getPlayerID())).forEach(entry -> {
+                    statisticCache.remove(entry.getKey());
                 });
             }
-            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-            List<UUID> uuids = players.stream().flatMap(p -> Stream.of(p.getUniqueId())).toList();
-
-            statisticCache.entrySet().stream().filter((entry) -> !uuids.contains(entry.getValue().getPlayerID())).forEach(entry -> {
-                statisticCache.remove(entry.getKey());
-            });
             consumer.accept(true);
         });
 
