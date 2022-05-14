@@ -131,7 +131,7 @@ public class Database {
     public void getTop10(UUID courseID, Consumer<List<Statistic>> consumer) {
         if (!valid) {return;}
 
-        String sql = "SELECT * FROM stats WHERE courseID = ? ORDER BY SEC_TO_TIME(time/1000)";
+        String sql = "SELECT * FROM stats WHERE courseID = ? ORDER BY SEC_TO_TIME(time/1000) LIMIT 10";
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, ()->{
             List<Statistic> top = new ArrayList<>();
