@@ -52,10 +52,9 @@ public class StatisticHandler {
                         }
                     });
                 }
-                Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-                List<UUID> uuids = players.stream().flatMap(p -> Stream.of(p.getUniqueId())).toList();
+                List<UUID> onlineUUIDS = Bukkit.getOnlinePlayers().stream().flatMap(p -> Stream.of(p.getUniqueId())).toList();
 
-                statisticCache.entrySet().stream().filter((entry) -> !uuids.contains(entry.getValue().getPlayerID())).forEach(entry -> {
+                statisticCache.entrySet().stream().filter((entry) -> !onlineUUIDS.contains(entry.getValue().getPlayerID())).forEach(entry -> {
                     statisticCache.remove(entry.getKey());
                 });
             }
@@ -69,7 +68,9 @@ public class StatisticHandler {
     }
 
     public void set(Statistic stat) {
-        statisticCache.put(stat.getKey(), stat);
+        if (stat.getTime() < statisticCache.get(stat.getKey()).getTime()) {
+            statisticCache.put(stat.getKey(), stat);
+        }
     }
 
     public void getTop10(UUID courseID, Consumer<List<Statistic>> consumer) {

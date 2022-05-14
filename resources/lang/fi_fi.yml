@@ -75,7 +75,7 @@ ValidateCourse:
   Good_Staring: "&b✔ &7Aloitus asetettu!"
   Good_Difficulty: "&b✔ &7Vaikeus taso asetettu!"
   Good_Spawn: "&b✔ &7Syntymä piste asetettu!"
-CcourseList:
+CourseList:
   Top:
     - " "
     - "&8&l&m━━━━━━━━━━━━&8&l|&9&l BetterParkour &8&l|&m━━━━━━━━━━━━"
