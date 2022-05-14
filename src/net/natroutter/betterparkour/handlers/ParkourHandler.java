@@ -77,8 +77,10 @@ public class ParkourHandler {
             }
         }
 
+        p.eject();
         if (p.getPassengers().size() > 0) {
             for(Entity ent : p.getPassengers()) {
+                p.removePassenger(ent);
                 ent.eject();
             }
         }
@@ -98,16 +100,19 @@ public class ParkourHandler {
 
     public void end(Player p) {
         if(!active.containsKey(p.getUniqueId())) {return;}
+
         ActiveCourse ac = active.get(p.getUniqueId());
-        active.remove(p.getUniqueId());
         ac.setEndTime(System.currentTimeMillis());
 
+        active.remove(p.getUniqueId());
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 100, 1);
 
-        Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), (ac.getEndTime() - ac.getStartTime()));
-        statisticHandler.set(stat);
-
-        Bukkit.getPluginManager().callEvent(new ParkourFinishedEvent(p, ac.getCourse(), ac.getStartTime(), ac.getEndTime(), (ac.getEndTime() - ac.getStartTime())));
+        ParkourFinishedEvent event = new ParkourFinishedEvent(p, ac.getCourse(), ac.getStartTime(), ac.getEndTime(), (ac.getEndTime() - ac.getStartTime()));
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), (ac.getEndTime() - ac.getStartTime()));
+            statisticHandler.set(stat);
+        }
 
         for (String line : lang.getList(Translations.CourseFinished)) {
             StringHandler str = new StringHandler(line);
