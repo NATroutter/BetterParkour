@@ -39,8 +39,7 @@ public class StatisticHandler {
         }, 0, 20*60*5);
     }
 
-    public void save(boolean async) {save(async, (b)->{});}
-    public void save(boolean async, Consumer<Boolean> consumer) {
+    public void save(boolean async) {
         database.saveBatch(statisticCache, async, (b)->{
             if (async) {
                 for (Course course : courses.getCourses()) {
@@ -58,7 +57,6 @@ public class StatisticHandler {
                     statisticCache.remove(entry.getKey());
                 });
             }
-            consumer.accept(true);
         });
 
     }
@@ -68,9 +66,15 @@ public class StatisticHandler {
     }
 
     public void set(Statistic stat) {
-        if (stat.getTime() < statisticCache.get(stat.getKey()).getTime()) {
+        Statistic oldStats = statisticCache.get(stat.getKey());
+        if (oldStats != null) {
+            if (stat.getTime() < statisticCache.get(stat.getKey()).getTime()) {
+                statisticCache.put(stat.getKey(), stat);
+            }
+        } else {
             statisticCache.put(stat.getKey(), stat);
         }
+
     }
 
     public void getTop10(UUID courseID, Consumer<List<Statistic>> consumer) {

@@ -3,6 +3,7 @@ package net.natroutter.betterparkour.handlers;
 import net.kyori.adventure.text.Component;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.events.*;
+import net.natroutter.betterparkour.files.Config;
 import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.objs.ActiveCourse;
 import net.natroutter.betterparkour.objs.Course;
@@ -13,6 +14,9 @@ import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +27,7 @@ public class ParkourHandler {
     private Handler handler;
     private LangManager lang;
     private StatisticHandler statisticHandler;
+    private Config config;
 
     public ConcurrentHashMap<UUID, ActiveCourse> active = new ConcurrentHashMap<>();
 
@@ -30,6 +35,7 @@ public class ParkourHandler {
         this.handler = handler;
         this.lang = handler.getLang();
         this.statisticHandler = handler.getStatisticHandler();
+        this.config = handler.getConfig();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(handler.getInstance(), ()->{
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -69,6 +75,9 @@ public class ParkourHandler {
         if (p.getVehicle() != null) {
             p.getVehicle().eject();
         }
+        for (PotionEffect effect : p.getActivePotionEffects()) {
+            p.removePotionEffect(effect.getType());
+        }
 
         for (ItemStack armor : p.getInventory().getArmorContents()) {
             if (armor == null) {continue;}
@@ -85,6 +94,9 @@ public class ParkourHandler {
             }
         }
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 100, 1);
+        if (config.InvisibleInCourse) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false, false));
+        }
 
         Bukkit.getPluginManager().callEvent(new ParkourJoinEvent(p, course));
 
@@ -109,10 +121,6 @@ public class ParkourHandler {
 
         ParkourFinishedEvent event = new ParkourFinishedEvent(p, ac.getCourse(), ac.getStartTime(), ac.getEndTime(), (ac.getEndTime() - ac.getStartTime()));
         Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), (ac.getEndTime() - ac.getStartTime()));
-            statisticHandler.set(stat);
-        }
 
         for (String line : lang.getList(Translations.CourseFinished)) {
             StringHandler str = new StringHandler(line);
@@ -127,6 +135,15 @@ public class ParkourHandler {
             str.replaceAll("%mills%", mills);
 
             str.send(p);
+        }
+
+        if (config.InvisibleInCourse) {
+            p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        }
+
+        if (!event.isCancelled()) {
+            Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), (ac.getEndTime() - ac.getStartTime()));
+            statisticHandler.set(stat);
         }
     }
 

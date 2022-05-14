@@ -83,6 +83,7 @@ public class Database {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, ()->{
                 sqlSave(map, consumer);
             });
+            return;
         }
         sqlSave(map, consumer);
     }

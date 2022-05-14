@@ -11,6 +11,7 @@ public class Config {
     }
 
     public String language = "en_us";
+    public boolean InvisibleInCourse = true;
 
     public class MySQL {
         private String host = "";
