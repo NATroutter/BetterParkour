@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,6 +31,14 @@ public class ParkourListener implements Listener {
         this.courses = handler.getCourses();
         this.parkourHandler = handler.getParkourHandler();
         this.lang = handler.getLang();
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        for (PotionEffect eff : p.getActivePotionEffects()) {
+            p.removePotionEffect(eff.getType());
+        }
     }
 
     @EventHandler

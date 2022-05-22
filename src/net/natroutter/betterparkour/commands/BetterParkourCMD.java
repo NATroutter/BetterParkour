@@ -4,12 +4,15 @@ import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.handlers.CourseBuilder;
 import net.natroutter.betterparkour.handlers.ParkourHandler;
+import net.natroutter.betterparkour.handlers.StatisticHandler;
+import net.natroutter.betterparkour.objs.Statistic;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +26,7 @@ public class BetterParkourCMD extends Command {
     private CourseBuilder course;
     private YamlDatabase yaml;
     private ParkourHandler parkourHandler;
+    private StatisticHandler statisticHandler;
 
     public BetterParkourCMD(Handler handler) {
         super("BetterParkour");
@@ -32,6 +36,7 @@ public class BetterParkourCMD extends Command {
         this.course = handler.getCourseBuilder();
         this.yaml = handler.getYaml();
         this.parkourHandler = handler.getParkourHandler();
+        this.statisticHandler = handler.getStatisticHandler();
     }
 
     @Override
@@ -62,6 +67,19 @@ public class BetterParkourCMD extends Command {
             } else if (args[0].equalsIgnoreCase("courses")) {
                 if (!handler.hasPerm(p, "courses")) {return false;}
                 course.printCourses(p);
+
+            } else if (args[0].equalsIgnoreCase("debug")) {
+                if (!handler.hasPerm(p, "debug")) {return false;}
+                for (Map.Entry<String, Statistic> c1 : statisticHandler.statisticCache.entrySet()) {
+                    p.sendMessage("Cache: - " + c1.getKey() + " - " + c1.getValue().toString());
+                }
+
+                for (Map.Entry<UUID, List<Statistic>> c1 : statisticHandler.statisticTop.entrySet()) {
+                    p.sendMessage("List: - " + c1.getKey());
+                    for (Statistic stats : c1.getValue()) {
+                        p.sendMessage("  - " + stats.toString());
+                    }
+                }
 
             } else {
                 lang.send(p, Translations.Prefix, Translations.InvalidArgs);

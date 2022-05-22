@@ -14,6 +14,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -119,9 +120,6 @@ public class ParkourHandler {
         active.remove(p.getUniqueId());
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 100, 1);
 
-        ParkourFinishedEvent event = new ParkourFinishedEvent(p, ac.getCourse(), ac.getStartTime(), ac.getEndTime(), (ac.getEndTime() - ac.getStartTime()));
-        Bukkit.getPluginManager().callEvent(event);
-
         for (String line : lang.getList(Translations.CourseFinished)) {
             StringHandler str = new StringHandler(line);
             str.replaceAll("%courseName%", ac.getCourse().getName());
@@ -137,9 +135,12 @@ public class ParkourHandler {
             str.send(p);
         }
 
-        if (config.InvisibleInCourse) {
-            p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        for (PotionEffect eff : p.getActivePotionEffects()) {
+            p.removePotionEffect(eff.getType());
         }
+
+        ParkourFinishedEvent event = new ParkourFinishedEvent(p, ac.getCourse(), ac.getStartTime(), ac.getEndTime(), (ac.getEndTime() - ac.getStartTime()));
+        Bukkit.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
             Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), (ac.getEndTime() - ac.getStartTime()));
@@ -170,6 +171,10 @@ public class ParkourHandler {
         if(!active.containsKey(p.getUniqueId())) {return;}
         ActiveCourse ac = active.get(p.getUniqueId());
         if (ac == null) {return;}
+
+        for (PotionEffect eff : p.getActivePotionEffects()) {
+            p.removePotionEffect(eff.getType());
+        }
 
         if (!ac.getCourse().getArena().contains(p.getLocation())) {
             if (ac.getLastCheck() != null) {

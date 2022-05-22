@@ -35,4 +35,14 @@ public class Statistic {
     public Long getTime() {
         return time;
     }
+
+    @Override
+    public String toString() {
+        return "Statistic{" +
+                "courseID=" + courseID +
+                ", playerID=" + playerID +
+                ", time=" + time +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

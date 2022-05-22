@@ -7,10 +7,7 @@ import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -23,8 +20,8 @@ public class StatisticHandler {
     private Database database;
     private Courses courses;
 
-    ConcurrentHashMap<String, Statistic> statisticCache = new ConcurrentHashMap<>();
-    ConcurrentHashMap<UUID, List<Statistic>> statisticTop = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Statistic> statisticCache = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<UUID, List<Statistic>> statisticTop = new ConcurrentHashMap<>();
 
     public StatisticHandler(Handler handler) {
         this.handler = handler;
@@ -62,6 +59,16 @@ public class StatisticHandler {
     }
 
     public void remove(UUID playerID, UUID courseID) {
+        statisticCache.remove(playerID + "~" + courseID);
+        List<Statistic> data = statisticTop.get(courseID);
+        if (data != null) {
+            for (int i = 0 ; i < data.size(); i++) {
+                Statistic stat = data.get(i);
+                if (stat.getPlayerID().equals(playerID)) {
+                    data.remove(i);
+                }
+            }
+        }
         database.deleteStats(playerID, courseID);
     }
 
