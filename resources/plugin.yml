@@ -1,4 +1,4 @@
-name: BetterParkour
+name: fi.natroutter.betterparkour.BetterParkour
 version: '${project.version}'
 main: BetterParkour
 api-version: 1.18
