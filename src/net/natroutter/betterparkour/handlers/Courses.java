@@ -2,7 +2,7 @@ package net.natroutter.betterparkour.handlers;
 
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.objs.Course;
-import net.natroutter.natlibs.handlers.Database.YamlDatabase;
+import net.natroutter.natlibs.handlers.database.YamlDatabase;
 import net.natroutter.natlibs.objects.Cuboid;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Location;

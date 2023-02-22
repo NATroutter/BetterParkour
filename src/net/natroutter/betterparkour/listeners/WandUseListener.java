@@ -3,7 +3,6 @@ package net.natroutter.betterparkour.listeners;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.handlers.CourseBuilder;
 import net.natroutter.betterparkour.items.GeneralItems;
-import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

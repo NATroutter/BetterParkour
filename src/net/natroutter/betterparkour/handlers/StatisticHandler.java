@@ -3,7 +3,7 @@ package net.natroutter.betterparkour.handlers;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.objs.Course;
 import net.natroutter.betterparkour.objs.Statistic;
-import net.natroutter.natlibs.handlers.Database.YamlDatabase;
+import net.natroutter.natlibs.handlers.database.YamlDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
