@@ -3,11 +3,10 @@ package net.natroutter.betterparkour.handlers;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import fi.natroutter.natlibs.utilities.MojangAPI;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Config;
 import net.natroutter.betterparkour.objs.Statistic;
-import net.natroutter.natlibs.utilities.MojangAPI;
-import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

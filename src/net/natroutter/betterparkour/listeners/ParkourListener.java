@@ -1,11 +1,11 @@
 package net.natroutter.betterparkour.listeners;
 
+import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.handlers.Courses;
 import net.natroutter.betterparkour.handlers.ParkourHandler;
 import net.natroutter.betterparkour.objs.Course;
-import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

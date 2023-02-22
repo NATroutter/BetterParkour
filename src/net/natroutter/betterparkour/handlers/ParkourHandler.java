@@ -1,5 +1,7 @@
 package net.natroutter.betterparkour.handlers;
 
+import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
+import fi.natroutter.natlibs.utilities.StringHandler;
 import net.kyori.adventure.text.Component;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.events.*;
@@ -8,8 +10,6 @@ import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.objs.ActiveCourse;
 import net.natroutter.betterparkour.objs.Course;
 import net.natroutter.betterparkour.objs.Statistic;
-import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
-import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

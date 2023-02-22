@@ -2,12 +2,12 @@ package net.natroutter.betterparkour.handlers;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
+import fi.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.objs.Course;
 import net.natroutter.betterparkour.objs.Statistic;
-import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
-import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 
 import java.util.*;

@@ -1,16 +1,16 @@
 package net.natroutter.betterparkour;
 
+import fi.natroutter.natlibs.handlers.configuration.ConfigManager;
+import fi.natroutter.natlibs.handlers.database.YamlDatabase;
+import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
+import fi.natroutter.natlibs.handlers.langHandler.language.Language;
+import fi.natroutter.natlibs.handlers.langHandler.language.key.LanguageKey;
+import fi.natroutter.natlibs.utilities.MojangAPI;
+import fi.natroutter.natlibs.utilities.Utilities;
 import net.natroutter.betterparkour.files.Config;
 import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.handlers.*;
 import net.natroutter.betterparkour.items.GeneralItems;
-import net.natroutter.natlibs.handlers.configuration.ConfigManager;
-import net.natroutter.natlibs.handlers.database.YamlDatabase;
-import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
-import net.natroutter.natlibs.handlers.langHandler.language.Language;
-import net.natroutter.natlibs.handlers.langHandler.language.key.LanguageKey;
-import net.natroutter.natlibs.utilities.MojangAPI;
-import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;

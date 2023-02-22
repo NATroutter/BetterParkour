@@ -1,13 +1,13 @@
 package net.natroutter.betterparkour.commands;
 
+import fi.natroutter.natlibs.handlers.database.YamlDatabase;
+import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Translations;
 import net.natroutter.betterparkour.handlers.CourseBuilder;
 import net.natroutter.betterparkour.handlers.ParkourHandler;
 import net.natroutter.betterparkour.handlers.StatisticHandler;
 import net.natroutter.betterparkour.objs.Statistic;
-import net.natroutter.natlibs.handlers.database.YamlDatabase;
-import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;

@@ -1,6 +1,6 @@
 package net.natroutter.betterparkour.objs;
 
-import net.natroutter.natlibs.objects.Cuboid;
+import fi.natroutter.natlibs.objects.Cuboid;
 import org.bukkit.Location;
 
 import java.util.List;

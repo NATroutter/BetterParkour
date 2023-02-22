@@ -1,8 +1,8 @@
 package net.natroutter.betterparkour.items;
 
+import fi.natroutter.natlibs.objects.BaseItem;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Translations;
-import net.natroutter.natlibs.objects.BaseItem;
 import org.bukkit.Material;
 
 public class GeneralItems {

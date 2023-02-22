@@ -1,10 +1,10 @@
 package net.natroutter.betterparkour.handlers;
 
+import fi.natroutter.natlibs.handlers.database.YamlDatabase;
+import fi.natroutter.natlibs.objects.Cuboid;
+import fi.natroutter.natlibs.utilities.Utilities;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.objs.Course;
-import net.natroutter.natlibs.handlers.database.YamlDatabase;
-import net.natroutter.natlibs.objects.Cuboid;
-import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

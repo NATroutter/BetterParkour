@@ -1,7 +1,7 @@
 package net.natroutter.betterparkour.handlers;
 
-import net.natroutter.natlibs.handlers.hooking.Hook;
-import net.natroutter.natlibs.handlers.hooking.HookSettings;
+import fi.natroutter.natlibs.handlers.hooking.Hook;
+import fi.natroutter.natlibs.handlers.hooking.HookSettings;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Hooks {

@@ -1,11 +1,11 @@
 package net.natroutter.betterparkour.handlers;
 
+import fi.natroutter.natlibs.handlers.database.YamlDatabase;
+import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
+import fi.natroutter.natlibs.utilities.StringHandler;
+import fi.natroutter.natlibs.utilities.Utilities;
 import net.natroutter.betterparkour.Handler;
 import net.natroutter.betterparkour.files.Translations;
-import net.natroutter.natlibs.handlers.database.YamlDatabase;
-import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
-import net.natroutter.natlibs.utilities.StringHandler;
-import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

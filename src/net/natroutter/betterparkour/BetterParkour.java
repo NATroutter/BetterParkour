@@ -1,6 +1,6 @@
 package net.natroutter.betterparkour;
 
-import net.natroutter.NATLibs.bstats.bukkit.Metrics;
+import fi.natroutter.natlibs.bstats.bukkit.Metrics;
 import net.natroutter.betterparkour.commands.BetterParkourCMD;
 import net.natroutter.betterparkour.listeners.ParkourListener;
 import net.natroutter.betterparkour.listeners.WandUseListener;
