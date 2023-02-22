@@ -1,6 +1,6 @@
-name: fi.natroutter.betterparkour.BetterParkour
+main: fi.natroutter.betterparkour.BetterParkour
+name: BetterParkour
 version: '${project.version}'
-main: BetterParkour
 api-version: 1.18
 authors: [NATroutter]
 description: Simple parkour plugin
