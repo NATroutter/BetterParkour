@@ -1,30 +1,29 @@
 package fi.natroutter.betterparkour.files;
 
-public class Config {
+import fi.natroutter.betterparkour.BetterParkour;
+import fi.natroutter.natlibs.config.IConfig;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.bukkit.plugin.java.JavaPlugin;
 
-    private MySQL mySQL;
+@Getter @AllArgsConstructor
+public enum Config implements IConfig {
 
-    public MySQL getMySQL() {return mySQL;}
+    Language("Language"),
+    InvisibleInCourse("InvisibleInCourse"),
 
-    public Config() {
-        this.mySQL = new MySQL();
+    Sql_Host("Sql.Host"),
+    Sql_Port("Sql.Port"),
+    Sql_User("Sql.Username"),
+    Sql_Pass("Sql.Password"),
+    Sql_Database("Sql.Database"),
+
+    ;
+
+    String path;
+
+    @Override
+    public JavaPlugin getPlugin() {
+        return BetterParkour.getInstance();
     }
-
-    public String language = "en_us";
-    public boolean InvisibleInCourse = true;
-
-    public class MySQL {
-        private String host = "";
-        private Integer port = 3306;
-        private String user = "";
-        private String pass = "";
-        private String database = "";
-
-        public String getHost() {return host;}
-        public Integer getPort() {return port;}
-        public String getUser() {return user;}
-        public String getPass() {return pass;}
-        public String getDatabase() {return database;}
-    }
-
 }

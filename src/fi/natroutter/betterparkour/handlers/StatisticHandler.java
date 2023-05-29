@@ -1,6 +1,6 @@
 package fi.natroutter.betterparkour.handlers;
 
-import fi.natroutter.betterparkour.Handler;
+import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.objs.Course;
 import fi.natroutter.betterparkour.objs.Statistic;
 import fi.natroutter.natlibs.handlers.database.YamlDatabase;
@@ -9,26 +9,20 @@ import org.bukkit.Bukkit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.logging.Handler;
 import java.util.stream.Stream;
 
 public class StatisticHandler {
 
-    private Handler handler;
-    private YamlDatabase yaml;
-
-    private Database database;
-    private Courses courses;
+    private Database database = BetterParkour.getDatabase();
+    private Courses courses = BetterParkour.getCourses();
 
     public ConcurrentHashMap<String, Statistic> statisticCache = new ConcurrentHashMap<>();
     public ConcurrentHashMap<UUID, List<Statistic>> statisticTop = new ConcurrentHashMap<>();
 
-    public StatisticHandler(Handler handler) {
-        this.handler = handler;
-        this.yaml = handler.getYaml();
-        this.database = handler.getDatabase();
-        this.courses = handler.getCourses();
+    public StatisticHandler() {
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(handler.getInstance(), ()->{
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(BetterParkour.getInstance(), ()->{
             if (Bukkit.getOnlinePlayers().size() > 0) {
                 save(true);
             }
@@ -43,7 +37,7 @@ public class StatisticHandler {
                         if (list != null) {
                             statisticTop.put(course.getId(), list);
                         } else {
-                            handler.console("§9[BetterParkour][Database] §bDatabase returned null list! (1)");
+                            BetterParkour.log("§9[BetterParkour][Database] §bDatabase returned null list! (1)");
                         }
                     });
                 }
@@ -92,7 +86,7 @@ public class StatisticHandler {
                     statisticTop.put(courseID, list);
                     consumer.accept(list);
                 } else {
-                    handler.console("§9[BetterParkour][Database] §bDatabase returned null list! (2)");
+                    BetterParkour.log("§9[BetterParkour][Database] §bDatabase returned null list! (2)");
                 }
             });
         }

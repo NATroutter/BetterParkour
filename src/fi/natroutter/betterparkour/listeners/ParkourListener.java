@@ -1,11 +1,11 @@
 package fi.natroutter.betterparkour.listeners;
 
+import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.handlers.ParkourHandler;
 import fi.natroutter.betterparkour.objs.Course;
-import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
-import fi.natroutter.betterparkour.Handler;
-import fi.natroutter.betterparkour.files.Translations;
+import fi.natroutter.betterparkour.files.Lang;
 import fi.natroutter.betterparkour.handlers.Courses;
+import fi.natroutter.natlibs.helpers.LangHelper;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,20 +18,16 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Handler;
 
 public class ParkourListener implements Listener {
 
-    private Courses courses;
-    private ParkourHandler parkourHandler;
-    private LangManager lang;
+    private Courses courses = BetterParkour.getCourses();
+    private ParkourHandler parkourHandler = BetterParkour.getParkourHandler();
+    private LangHelper lh = BetterParkour.getLangHelper();
 
     public HashMap<UUID, Long> cooldown = new HashMap<>();
 
-    public ParkourListener(Handler handler) {
-        this.courses = handler.getCourses();
-        this.parkourHandler = handler.getParkourHandler();
-        this.lang = handler.getLang();
-    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
@@ -62,7 +58,7 @@ public class ParkourListener implements Listener {
         if (parkourHandler.inCourse(p)) {
             if (!cmd.startsWith("/bp") && !cmd.startsWith("/betterparkour")) {
                 e.setCancelled(true);
-                lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
+                lh.prefix(p, Lang.CantWhileInCourse);
             }
         }
     }
@@ -74,12 +70,12 @@ public class ParkourListener implements Listener {
         }
         if (parkourHandler.inCourse(p)) {
             e.setCancelled(true);
-            lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
+            lh.prefix(p, Lang.CantWhileInCourse);
         } else {
             if (e.getVehicle().getVehicle() instanceof Player v) {
                 if (parkourHandler.inCourse(v)) {
                     e.setCancelled(true);
-                    lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
+                    lh.prefix(p, Lang.CantWhileInCourse);
                 }
             }
         }
@@ -115,7 +111,7 @@ public class ParkourListener implements Listener {
         } else {
             if (parkourHandler.inCourse(p)) {
                 e.setCancelled(true);
-                lang.send(p, Translations.Prefix, Translations.CantWhileInCourse);
+                lh.prefix(p, Lang.CantWhileInCourse);
             }
         }
 

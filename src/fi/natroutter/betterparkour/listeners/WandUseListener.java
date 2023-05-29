@@ -1,8 +1,8 @@
 package fi.natroutter.betterparkour.listeners;
 
-import fi.natroutter.betterparkour.Handler;
+import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.handlers.CourseBuilder;
-import fi.natroutter.betterparkour.items.GeneralItems;
+import fi.natroutter.betterparkour.items.GItems;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,17 +12,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.logging.Handler;
+
 public class WandUseListener implements Listener {
 
-    Handler handler;
-    GeneralItems items;
-    CourseBuilder course;
-
-    public WandUseListener(Handler handler) {
-        this.handler = handler;
-        this.items = handler.getItems();
-        this.course = handler.getCourseBuilder();
-    }
+    CourseBuilder course = BetterParkour.getCourseBuilder();
 
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
@@ -30,9 +24,8 @@ public class WandUseListener implements Listener {
         if (e.hasItem() && e.getItem() != null && e.hasBlock() && e.getClickedBlock() != null) {
             Block block = e.getClickedBlock();
             ItemStack item = e.getItem();
-            String name = item.getItemMeta().getDisplayName();
 
-            if (name.equalsIgnoreCase(items.wand().getDisplayName())) {
+            if (item.isSimilar(GItems.wand())) {
                 if (e.getHand() != EquipmentSlot.HAND) {return;}
                 e.setCancelled(true);
 

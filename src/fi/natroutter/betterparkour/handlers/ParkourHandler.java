@@ -1,15 +1,16 @@
 package fi.natroutter.betterparkour.handlers;
 
+import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.events.*;
-import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
+import fi.natroutter.natlibs.helpers.LangHelper;
 import fi.natroutter.natlibs.utilities.StringHandler;
 import net.kyori.adventure.text.Component;
-import fi.natroutter.betterparkour.Handler;
 import fi.natroutter.betterparkour.files.Config;
-import fi.natroutter.betterparkour.files.Translations;
+import fi.natroutter.betterparkour.files.Lang;
 import fi.natroutter.betterparkour.objs.ActiveCourse;
 import fi.natroutter.betterparkour.objs.Course;
 import fi.natroutter.betterparkour.objs.Statistic;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -17,44 +18,36 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
 
 public class ParkourHandler {
 
-    private Handler handler;
-    private LangManager lang;
-    private StatisticHandler statisticHandler;
-    private Config config;
+    private StatisticHandler statisticHandler = BetterParkour.getStatisticHandler();
+    private LangHelper lh = BetterParkour.getLangHelper();
 
     public ConcurrentHashMap<UUID, ActiveCourse> active = new ConcurrentHashMap<>();
 
-    public ParkourHandler(Handler handler) {
-        this.handler = handler;
-        this.lang = handler.getLang();
-        this.statisticHandler = handler.getStatisticHandler();
-        this.config = handler.getConfig();
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(handler.getInstance(), ()->{
+    public ParkourHandler() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(BetterParkour.getInstance(), ()->{
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (!inCourse(p)) {continue;}
                 ActiveCourse ac = active.get(p.getUniqueId());
-                StringHandler bar = new StringHandler(lang.get(Translations.ActionBar));
                 long time = (System.currentTimeMillis() - ac.getStartTime());
-
-                bar.replaceAll("%name%", ac.getCourse().getName());
-                bar.replaceAll("%diff%", ac.getCourse().getDiff());
-
                 long secs = TimeUnit.MILLISECONDS.toSeconds(time);
                 long mills = time - (secs * 1000);
 
-                bar.replaceAll("%secs%", secs);
-                bar.replaceAll("%mills%", mills);
+                p.sendActionBar(Lang.ActionBar.asComponent(List.of(
+                        Placeholder.parsed("name",ac.getCourse().getName()),
+                        Placeholder.parsed("diff",ac.getCourse().getDiff()),
+                        Placeholder.parsed("secs",String.valueOf(secs)),
+                        Placeholder.parsed("mills",String.valueOf(mills))
+                )));
 
-                p.sendActionBar(Component.text(bar.build()));
-
-                if (time >= 86400000) { //leaves from parkour if more than 24h
+                if (time >= 86400000) { //leaves from parkour if more than 24h (stupid safety feature)
                     leave(p);
                 }
 
@@ -93,7 +86,7 @@ public class ParkourHandler {
             }
         }
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 100, 1);
-        if (config.InvisibleInCourse) {
+        if (Config.InvisibleInCourse.asBoolean()) {
             p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false, false));
         }
 
@@ -118,20 +111,16 @@ public class ParkourHandler {
         active.remove(p.getUniqueId());
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 100, 1);
 
-        for (String line : lang.getList(Translations.CourseFinished)) {
-            StringHandler str = new StringHandler(line);
-            str.replaceAll("%courseName%", ac.getCourse().getName());
-            str.replaceAll("%diff%", ac.getCourse().getDiff());
+        long time = (ac.getEndTime() - ac.getStartTime());
+        long secs = TimeUnit.MILLISECONDS.toSeconds(time);
+        long mills = time - (secs * 1000);
 
-            long time = (ac.getEndTime() - ac.getStartTime());
-            long secs = TimeUnit.MILLISECONDS.toSeconds(time);
-            long mills = time - (secs * 1000);
-
-            str.replaceAll("%secs%", secs);
-            str.replaceAll("%mills%", mills);
-
-            str.send(p);
-        }
+        p.sendMessage(Lang.CourseFinished.asComponent(List.of(
+                Placeholder.parsed("courseName",ac.getCourse().getName()),
+                Placeholder.parsed("diff",ac.getCourse().getDiff()),
+                Placeholder.parsed("secs",String.valueOf(secs)),
+                Placeholder.parsed("mills",String.valueOf(mills))
+        )));
 
         for (PotionEffect eff : p.getActivePotionEffects()) {
             p.removePotionEffect(eff.getType());
@@ -177,7 +166,7 @@ public class ParkourHandler {
         if (!ac.getCourse().getArena().contains(p.getLocation())) {
             if (ac.getLastCheck() != null) {
                 p.teleport(ac.getLastCheck());
-                lang.send(p, Translations.Prefix, Translations.LeaveInfoMessage);
+                lh.prefix(p, Lang.LeaveInfoMessage);
             } else {
                 p.teleport(ac.getCourse().getSpawn());
                 active.remove(p.getUniqueId());

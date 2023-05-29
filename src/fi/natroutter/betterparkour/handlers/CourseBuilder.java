@@ -1,25 +1,23 @@
 package fi.natroutter.betterparkour.handlers;
 
-import fi.natroutter.betterparkour.Handler;
+import fi.natroutter.betterparkour.BetterParkour;
+import fi.natroutter.betterparkour.items.GItems;
 import fi.natroutter.natlibs.handlers.database.YamlDatabase;
-import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
+import fi.natroutter.natlibs.helpers.LangHelper;
 import fi.natroutter.natlibs.utilities.StringHandler;
 import fi.natroutter.natlibs.utilities.Utilities;
-import fi.natroutter.betterparkour.files.Translations;
+import fi.natroutter.betterparkour.files.Lang;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.logging.Handler;
 
 public class CourseBuilder {
 
     private YamlDatabase yaml;
-    private LangManager lang;
-    private Utilities util;
+    private LangHelper lh;
     private Courses courses;
     private Database database;
     private Handler handler;
@@ -27,102 +25,100 @@ public class CourseBuilder {
 
     public UUID CourseID;
 
-    public CourseBuilder(Handler handler) {
-        this.handler = handler;
-        this.yaml = handler.getYaml();
-        this.lang = handler.getLang();
-        this.util = handler.getUtil();
-        this.courses = handler.getCourses();
-        this.database = handler.getDatabase();
-        this.topHolo = handler.getTopHologramHandler();
+    public CourseBuilder() {
+        this.yaml = BetterParkour.getYaml();
+        this.lh = BetterParkour.getLangHelper();
+        this.courses = BetterParkour.getCourses();
+        this.database = BetterParkour.getDatabase();
+        this.topHolo = BetterParkour.getTopHologramHandler();
     }
 
     public void abort(Player p) {
         if (CourseID != null) {
             yaml.save("courses", CourseID.toString(), null);
             CourseID = null;
-            lang.send(p, Translations.Prefix, Translations.CourseCreatingAborted);
+            lh.prefix(p, Lang.CourseCreatingAborted);
         } else {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
         }
     }
 
     public boolean save(Player p) {
         if (CourseID == null) {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
             return false;
         }
         if (courses.validateCourse(CourseID)) {
-            lang.send(p, Translations.Prefix, Translations.CourseEditFinished);
+            lh.prefix(p, Lang.CourseEditFinished);
             CourseID = null;
             courses.loadCourses();
             topHolo.loadData();
             topHolo.loadHolograms();
             return true;
         } else {
-            lang.send(p, Translations.Prefix, Translations.CourseNotGood);
+            lh.prefix(p, Lang.CourseNotGood);
             return false;
         }
     }
 
     public boolean setSpawn(Player p, Location loc) {
-        return setLoc(p,"spawn",loc, lang.get(Translations.SpawnSet));
+        return setLoc(p,"spawn",loc, Lang.SpawnSet.asString());
     }
     public boolean setTopList(Player p, Location loc) {
-        return setLoc(p,"toplist",loc, lang.get(Translations.TopListSet));
+        return setLoc(p,"toplist",loc, Lang.TopListSet.asString());
     }
     public boolean setPos1(Player p, Location loc) {
-        return setLoc(p, "pos1",loc, lang.get(Translations.FirstCornerSet));
+        return setLoc(p, "pos1",loc, Lang.FirstCornerSet.asString());
     }
     public boolean setPos2(Player p, Location loc) {
-        return setLoc(p,"pos2",loc, lang.get(Translations.SecondCornerSet));
+        return setLoc(p,"pos2",loc, Lang.SecondCornerSet.asString());
     }
     public boolean setStart(Player p) {
-        return set(p,"start", lang.get(Translations.StartSet));
+        return set(p,"start", Lang.StartSet.asString());
     }
     public boolean setEnd(Player p) {
-        return set(p,"end", lang.get(Translations.EndSet));
+        return set(p,"end", Lang.EndSet.asString());
     }
     public boolean setDiff(Player p, String val) {
-        return setVal(p,"diff", val, lang.get(Translations.DifficultySet));
+        return setVal(p,"diff", val, Lang.DifficultySet.asString());
     }
     public boolean setName(Player p, String val) {
-        return setVal(p,"name", val, lang.get(Translations.CourseRenamed));
+        return setVal(p,"name", val, Lang.CourseRenamed.asString());
     }
     public boolean addCheckpoint(Player p) {
-        return add(p,"check", lang.get(Translations.CheckpointAdded));
+        return add(p,"check", Lang.CheckpointAdded.asString());
     }
 
     public void giveWand(Player p) {
         if (CourseID == null) {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
             return;
         }
-        p.getInventory().addItem(handler.getItems().wand());
-        lang.send(p, Translations.Prefix, Translations.WandGive);
+        p.getInventory().addItem(GItems.wand());
+        lh.prefix(p, Lang.WandGive);
     }
 
     public void printCourses(Player p) {
         Set<String> keys = yaml.getKeys("courses");
         if (keys.size() > 0) {
-            lang.sendList(p, Translations.CourseList_Top);
+            lh.sendList(p, Lang.CourseList_Top);
             for (String key : yaml.getKeys("courses")) {
                 String name = yaml.getString("courses." + key, "name");
                 String diff = yaml.getString("courses." + key, "diff");
-                StringHandler line = new StringHandler(lang.get(Translations.CourseList_Entry));
+                StringHandler line = new StringHandler(Lang.CourseList_Entry.asString());
                 line.replaceAll("%name%",name);
                 line.replaceAll("%diff%",diff);
                 line.send(p);
             }
-            lang.sendList(p, Translations.CourseList_Bottom);
+            lh.sendList(p, Lang.CourseList_Bottom);
         } else {
-            lang.send(p, Translations.Prefix, Translations.CourseList_NoCourses);
+            lh.prefix(p, Lang.CourseList_NoCourses);
         }
     }
 
     public void create(Player p, String name) {
         if (CourseID != null) {
-            lang.send(p, Translations.Prefix, Translations.CourseInEdit);
+            lh.prefix(p, Lang.CourseInEdit);
             return;
         }
 
@@ -130,7 +126,7 @@ public class CourseBuilder {
             for (String key : yaml.getKeys("courses")) {
                 String courseN = yaml.getString("courses." + key, "name");
                 if (courseN.equalsIgnoreCase(name)) {
-                    lang.send(p, Translations.Prefix, Translations.CourseExist);
+                    lh.prefix(p, Lang.CourseExist);
                     return;
                 }
             }
@@ -139,7 +135,7 @@ public class CourseBuilder {
         UUID id = UUID.randomUUID();
         CourseID = id;
         yaml.save("courses." + id, "name", name);
-        lang.send(p, Translations.Prefix, Translations.CourseCreated);
+        lh.prefix(p, Lang.CourseCreated);
     }
 
     public void remove(Player p, String name) {
@@ -149,11 +145,11 @@ public class CourseBuilder {
                 yaml.save("courses", key, null);
                 database.deleteCourse(UUID.fromString(key));
 
-                lang.send(p, Translations.Prefix, Translations.CourseRemoved);
+                lh.prefix(p, Lang.CourseRemoved);
                 return;
             }
         }
-        lang.send(p, Translations.Prefix, Translations.CourseDoesntExits);
+        lh.prefix(p, Lang.CourseDoesntExits);
     }
 
     public void edit(Player p, String name) {
@@ -161,19 +157,19 @@ public class CourseBuilder {
             String courseN = yaml.getString("courses." + key, "name");
             if (courseN.equalsIgnoreCase(name)) {
                 CourseID = UUID.fromString(key);
-                StringHandler msg = new StringHandler(lang.get(Translations.CourseEditSelected));
-                msg.setPrefix(lang.get(Translations.Prefix));
+                StringHandler msg = new StringHandler(Lang.CourseEditSelected.asString());
+                msg.setPrefix(Lang.Prefix.asString());
                 msg.replaceAll("%course%", courseN);
                 msg.send(p);
                 return;
             }
         }
-        lang.send(p, Translations.Prefix, Translations.CourseDoesntExits);
+        lh.prefix(p, Lang.CourseDoesntExits);
     }
 
     public void printValidation(Player p) {
         if (CourseID == null) {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
             return;
         }
         ArrayList<String> resps = new ArrayList<>();
@@ -187,59 +183,59 @@ public class CourseBuilder {
         Location spawn = yaml.getLocation("courses." + CourseID, "spawn");
 
         if (name == null || name.length() < 1) {
-            resps.add(lang.get(Translations.ValidateCourse_Err_Name));
+            resps.add(Lang.ValidateCourse_Err_Name.asString());
         } else {
-            resps.add(lang.get(Translations.ValidateCourse_Good_Name));
+            resps.add(Lang.ValidateCourse_Good_Name.asString());
         }
 
         if (pos1 == null) {
-            resps.add(lang.get(Translations.ValidateCourse_Err_FirstCorner));
+            resps.add(Lang.ValidateCourse_Err_FirstCorner.asString());
         } else {
-            resps.add(lang.get(Translations.ValidateCourse_Good_FirstCorner));
+            resps.add(Lang.ValidateCourse_Good_FirstCorner.asString());
         }
 
         if (pos2 == null) {
-            resps.add(lang.get(Translations.ValidateCourse_Err_SecCorner));
+            resps.add(Lang.ValidateCourse_Err_SecCorner.asString());
         } else {
-            resps.add(lang.get(Translations.ValidateCourse_Good_SecCorner));
+            resps.add(Lang.ValidateCourse_Good_SecCorner.asString());
         }
 
         if (start == null) {
-            resps.add(lang.get(Translations.ValidateCourse_Err_Staring));
+            resps.add(Lang.ValidateCourse_Err_Staring.asString());
         } else {
-            resps.add(lang.get(Translations.ValidateCourse_Good_Staring));
+            resps.add(Lang.ValidateCourse_Good_Staring.asString());
         }
 
         if (end == null) {
-            resps.add(lang.get(Translations.ValidateCourse_Err_Ending));
+            resps.add(Lang.ValidateCourse_Err_Ending.asString());
         } else {
-            resps.add(lang.get(Translations.ValidateCourse_Good_Ending));
+            resps.add(Lang.ValidateCourse_Good_Ending.asString());
         }
 
         if (diff == null || diff.length() < 1) {
-            resps.add(lang.get(Translations.ValidateCourse_Err_Difficulty));
+            resps.add(Lang.ValidateCourse_Err_Difficulty.asString());
         } else {
-            resps.add(lang.get(Translations.ValidateCourse_Good_Difficulty));
+            resps.add(Lang.ValidateCourse_Good_Difficulty.asString());
         }
 
         if (spawn == null) {
-            resps.add(lang.get(Translations.ValidateCourse_Err_Spawn));
+            resps.add(Lang.ValidateCourse_Err_Spawn.asString());
         } else {
-            resps.add(lang.get(Translations.ValidateCourse_Good_Spawn));
+            resps.add(Lang.ValidateCourse_Good_Spawn.asString());
         }
 
-        for(String line : lang.getList(Translations.ValidateCourse_top)) {
+        for(String line : Lang.ValidateCourse_top.asStringList()) {
             StringHandler m = new StringHandler(line);
             m.replaceAll("%id%", CourseID);
             m.replaceAll("%name%", name);
             m.send(p);
         }
         for (String part : resps) {
-            StringHandler m = new StringHandler(lang.getList(Translations.ValidateCourse_Entry));
+            StringHandler m = new StringHandler(Lang.ValidateCourse_Entry.asString());
             m.replaceAll("%part%", part);
             m.send(p);
         }
-        for(String line : lang.getList(Translations.ValidateCourse_Bottom)) {
+        for(String line : Lang.ValidateCourse_Bottom.asStringList()) {
             StringHandler m = new StringHandler(line);
             m.send(p);
         }
@@ -250,59 +246,59 @@ public class CourseBuilder {
 
     private boolean setLoc(Player p, String set, Location loc, String successMessage) {
         if (CourseID == null) {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
             return false;
         }
-        yaml.saveLoc("courses." + CourseID, set, loc);
-        p.sendMessage(lang.get(Translations.Prefix) + successMessage);
+        yaml.save("courses." + CourseID, set, loc);
+        p.sendMessage(Lang.Prefix.asLegacy() + successMessage);
         return true;
     }
 
     private boolean set(Player p, String set, String successMessage) {
         if (CourseID == null) {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
             return false;
         }
-        Block b = p.getTargetBlock(10);
+        Block b = p.getTargetBlockExact(20);
         if (b == null) {
-            lang.send(p, Translations.Prefix, Translations.InvalidBlockTarget);
+            lh.prefix(p, Lang.InvalidBlockTarget);
             return false;
         }
         if (!b.getType().name().toLowerCase().endsWith("pressure_plate")) {
-            lang.send(p, Translations.Prefix, Translations.PressurePlateNeeded);
+            lh.prefix(p, Lang.PressurePlateNeeded);
             return false;
         }
-        yaml.saveLoc("courses." + CourseID, set, b.getLocation());
-        p.sendMessage(lang.get(Translations.Prefix) + successMessage);
+        yaml.save("courses." + CourseID, set, b.getLocation());
+        p.sendMessage(Lang.Prefix.asLegacy() + successMessage);
         return true;
     }
 
     private boolean add(Player p, String set, String successMessage) {
         if (CourseID == null) {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
             return false;
         }
-        Block b = p.getTargetBlock(10);
-        if (b == null) {lang.send(p, Translations.Prefix, Translations.InvalidBlockTarget);}
+        Block b = p.getTargetBlockExact(20);
+        if (b == null) {lh.prefix(p, Lang.InvalidBlockTarget);}
         if (!b.getType().name().toLowerCase().endsWith("pressure_plate")) {
-            lang.send(p, Translations.Prefix, Translations.PressurePlateNeeded);
+            lh.prefix(p, Lang.PressurePlateNeeded);
             return false;
         }
         List<String> locs = yaml.getStringList("courses." + CourseID, set);
-        locs.add(util.serializeLocation(b.getLocation(), '~'));
+        locs.add(Utilities.serializeLocation(b.getLocation(), '~'));
         yaml.save("courses." + CourseID, set, locs);
-        p.sendMessage(lang.get(Translations.Prefix) + successMessage);
+        p.sendMessage(Lang.Prefix.asLegacy() + successMessage);
         return true;
     }
 
     private boolean setVal(Player p, String set, String val, String successMessage) {
         if (CourseID == null) {
-            lang.send(p, Translations.Prefix, Translations.CourseNotSelected);
+            lh.prefix(p, Lang.CourseNotSelected);
             return false;
         }
 
         yaml.save("courses." + CourseID, set, val);
-        p.sendMessage(lang.get(Translations.Prefix) + successMessage);
+        p.sendMessage(Lang.Prefix.asLegacy() + successMessage);
         return true;
     }
 

@@ -1,13 +1,13 @@
 package fi.natroutter.betterparkour.commands;
 
+import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.handlers.ParkourHandler;
 import fi.natroutter.natlibs.handlers.database.YamlDatabase;
-import fi.natroutter.natlibs.handlers.langHandler.language.LangManager;
-import fi.natroutter.betterparkour.Handler;
-import fi.natroutter.betterparkour.files.Translations;
+import fi.natroutter.betterparkour.files.Lang;
 import fi.natroutter.betterparkour.handlers.CourseBuilder;
 import fi.natroutter.betterparkour.handlers.StatisticHandler;
 import fi.natroutter.betterparkour.objs.Statistic;
+import fi.natroutter.natlibs.helpers.LangHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,58 +17,57 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Handler;
 
 public class BetterParkourCMD extends Command {
 
-    private Handler handler;
-    private LangManager lang;
+    private LangHelper lh;
     private CourseBuilder course;
     private YamlDatabase yaml;
     private ParkourHandler parkourHandler;
     private StatisticHandler statisticHandler;
 
-    public BetterParkourCMD(Handler handler) {
+    public BetterParkourCMD() {
         super("BetterParkour");
         this.setAliases(Collections.singletonList("bp"));
-        this.handler = handler;
-        this.lang = handler.getLang();
-        this.course = handler.getCourseBuilder();
-        this.yaml = handler.getYaml();
-        this.parkourHandler = handler.getParkourHandler();
-        this.statisticHandler = handler.getStatisticHandler();
+        this.lh = BetterParkour.getLangHelper();
+        this.course = BetterParkour.getCourseBuilder();
+        this.yaml = BetterParkour.getYaml();
+        this.parkourHandler = BetterParkour.getParkourHandler();
+        this.statisticHandler = BetterParkour.getStatisticHandler();
     }
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player p)) {
-            lang.send(sender, Translations.Prefix, Translations.OnlyIngame);
+            lh.prefix(sender, Lang.OnlyIngame);
             return false;
         }
 
         if (args.length == 0) {
-            lang.send(p, Translations.Prefix, Translations.WrongCommandUsage);
+            lh.prefix(p, Lang.WrongCommandUsage);
         } else if (args.length == 1) {
 
             if (args[0].equalsIgnoreCase("help")) {
-                if (!handler.hasPerm(p, "help")) {return false;}
-                lang.sendList(p, Translations.HelpMessage);
+                if (!BetterParkour.hasPerm(p, "help")) {return false;}
+                lh.sendList(p, Lang.HelpMessage);
 
             } else if (args[0].equalsIgnoreCase("leave")) {
-                if (!handler.hasPerm(p, "leave")) {return false;}
+                if (!BetterParkour.hasPerm(p, "leave")) {return false;}
                 if (parkourHandler.inCourse(p)) {
-                    lang.send(p, Translations.Prefix, Translations.LeaveMessage);
+                    lh.prefix(p, Lang.LeaveMessage);
                     parkourHandler.leave(p);
                 } else {
-                    lang.send(p, Translations.Prefix, Translations.NotInCourse);
+                    lh.prefix(p, Lang.NotInCourse);
                 }
 
 
             } else if (args[0].equalsIgnoreCase("courses")) {
-                if (!handler.hasPerm(p, "courses")) {return false;}
+                if (!BetterParkour.hasPerm(p, "courses")) {return false;}
                 course.printCourses(p);
 
             } else if (args[0].equalsIgnoreCase("debug")) {
-                if (!handler.hasPerm(p, "debug")) {return false;}
+                if (!BetterParkour.hasPerm(p, "debug")) {return false;}
                 for (Map.Entry<String, Statistic> c1 : statisticHandler.statisticCache.entrySet()) {
                     p.sendMessage("Cache: - " + c1.getKey() + " - " + c1.getValue().toString());
                 }
@@ -81,142 +80,142 @@ public class BetterParkourCMD extends Command {
                 }
 
             } else {
-                lang.send(p, Translations.Prefix, Translations.InvalidArgs);
+                lh.prefix(p, Lang.InvalidArgs);
             }
 
         } else if (args.length == 2) {
 
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!handler.hasPerm(p, "setup")) {
+                if (!BetterParkour.hasPerm(p, "setup")) {
                     return false;
                 }
 
                 if (args[1].equalsIgnoreCase("wand")) {
-                    if (!handler.hasPerm(p, "setup.wand")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.wand")) {return false;}
                     course.giveWand(p);
 
                 } else if (args[1].equalsIgnoreCase("start")) {
-                    if (!handler.hasPerm(p, "setup.start")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.start")) {return false;}
                     course.setStart(p);
 
                 } else if (args[1].equalsIgnoreCase("toplist")) {
-                    if (!handler.hasPerm(p, "setup.toplist")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.toplist")) {return false;}
                     course.setTopList(p, p.getLocation());
 
                 } else if (args[1].equalsIgnoreCase("end")) {
-                    if (!handler.hasPerm(p, "setup.end")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.end")) {return false;}
                     course.setEnd(p);
 
                 } else if (args[1].equalsIgnoreCase("addpoint")) {
-                    if (!handler.hasPerm(p, "setup.addpoint")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.addpoint")) {return false;}
                     course.addCheckpoint(p);
 
                 } else if (args[1].equalsIgnoreCase("abort")) {
-                    if (!handler.hasPerm(p, "setup.abort")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.abort")) {return false;}
                     course.abort(p);
 
                 } else if (args[1].equalsIgnoreCase("info")) {
-                    if (!handler.hasPerm(p, "setup.info")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.info")) {return false;}
                     course.printValidation(p);
 
                 } else if (args[1].equalsIgnoreCase("done")) {
-                    if (!handler.hasPerm(p, "setup.done")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.done")) {return false;}
                     course.save(p);
 
                 } else if (args[1].equalsIgnoreCase("spawn")) {
-                    if (!handler.hasPerm(p, "setup.spawn")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "setup.spawn")) {return false;}
                     course.setSpawn(p, p.getLocation());
 
                 } else {
-                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
+                    lh.prefix(p, Lang.InvalidArgs);
                 }
 
             } else if (args[0].equalsIgnoreCase("stats")) {
-                if (!handler.hasPerm(p, "stats")) {return false;}
+                if (!BetterParkour.hasPerm(p, "stats")) {return false;}
 
                 if (args[1].equalsIgnoreCase("save")) {
-                    if (!handler.hasPerm(p, "stats.save")) {
+                    if (!BetterParkour.hasPerm(p, "stats.save")) {
                         return false;
                     }
 
-                    handler.getStatisticHandler().save(true);
-                    handler.getTopHologramHandler().loadHolograms();
-                    lang.send(p, Translations.Prefix, Translations.StatisticsSaved);
+                    BetterParkour.getStatisticHandler().save(true);
+                    BetterParkour.getTopHologramHandler().loadHolograms();
+                    lh.prefix(p, Lang.StatisticsSaved);
 
                 } else {
-                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
+                    lh.prefix(p, Lang.InvalidArgs);
                 }
 
             } else {
-                lang.send(p, Translations.Prefix, Translations.InvalidArgs);
+                lh.prefix(p, Lang.InvalidArgs);
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!handler.hasPerm(p, "setup")) {
+                if (!BetterParkour.hasPerm(p, "setup")) {
                     return false;
                 }
 
                 if (args[1].equalsIgnoreCase("difficulty")) {
-                    if (!handler.hasPerm(p, "setup.difficulty")) {
+                    if (!BetterParkour.hasPerm(p, "setup.difficulty")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.setDiff(p, name);
 
                 } else if (args[1].equalsIgnoreCase("rename")) {
-                    if (!handler.hasPerm(p, "setup.rename")) {
+                    if (!BetterParkour.hasPerm(p, "setup.rename")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.setName(p, name);
 
                 } else {
-                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
+                    lh.prefix(p, Lang.InvalidArgs);
                 }
             } else if (args[0].equalsIgnoreCase("course")) {
-                if (!handler.hasPerm(p, "course")) {
+                if (!BetterParkour.hasPerm(p, "course")) {
                     return false;
                 }
 
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!handler.hasPerm(p, "course.remove")) {
+                    if (!BetterParkour.hasPerm(p, "course.remove")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.remove(p, name);
 
                 } else if (args[1].equalsIgnoreCase("create")) {
-                    if (!handler.hasPerm(p, "course.create")) {
+                    if (!BetterParkour.hasPerm(p, "course.create")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.create(p, name);
 
                 } else if (args[1].equalsIgnoreCase("edit")) {
-                    if (!handler.hasPerm(p, "course.edit")) {
+                    if (!BetterParkour.hasPerm(p, "course.edit")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.edit(p, name);
 
                 } else {
-                    lang.send(p, Translations.Prefix, Translations.InvalidArgs);
+                    lh.prefix(p, Lang.InvalidArgs);
                 }
 
             } else {
-                lang.send(p, Translations.Prefix, Translations.InvalidArgs);
+                lh.prefix(p, Lang.InvalidArgs);
             }
         } else if (args.length == 4) {
 
             if (args[0].equalsIgnoreCase("stats")) {
-                if (!handler.hasPerm(p, "stats")) {return false;}
+                if (!BetterParkour.hasPerm(p, "stats")) {return false;}
 
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!handler.hasPerm(p, "stats.remove")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "stats.remove")) {return false;}
 
                     OfflinePlayer ofp = Bukkit.getOfflinePlayerIfCached(args[2]);
                     if (ofp == null) {
-                        lang.send(p, Translations.Prefix, Translations.InvalidPlayer);
+                        lh.prefix(p, Lang.InvalidPlayer);
                         return false;
                     }
 
@@ -229,33 +228,33 @@ public class BetterParkourCMD extends Command {
                         }
                     }
                     if (selected == null) {
-                        lang.send(p, Translations.Prefix, Translations.InvalidCourse);
+                        lh.prefix(p, Lang.InvalidCourse);
                         return false;
                     }
 
 
-                    handler.getStatisticHandler().remove(ofp.getUniqueId(), selected);
-                    handler.getStatisticHandler().save(true);
-                    handler.getTopHologramHandler().loadHolograms();
-                    lang.send(p, Translations.Prefix, Translations.StatisticsRemoved);
+                    BetterParkour.getStatisticHandler().remove(ofp.getUniqueId(), selected);
+                    BetterParkour.getStatisticHandler().save(true);
+                    BetterParkour.getTopHologramHandler().loadHolograms();
+                    lh.prefix(p, Lang.StatisticsRemoved);
                 }
 
             }
 
         } else {
-            lang.send(p, Translations.Prefix, Translations.TooManyArguments);
+            lh.prefix(p, Lang.TooManyArguments);
         }
         return false;
     }
 
     private List<String> commandArgs(CommandSender sender) {
         return new ArrayList<>(){{
-            if (handler.hasPerm(sender, "help")) {add("help");}
-            if (handler.hasPerm(sender, "courses")) {add("courses");}
-            if (handler.hasPerm(sender, "setup")) {add("setup");}
-            if (handler.hasPerm(sender, "course")) {add("course");}
-            if (handler.hasPerm(sender, "stats")) {add("stats");}
-            if (handler.hasPerm(sender, "leave")) {add("leave");}
+            if (sender.hasPermission("help")) {add("help");}
+            if (sender.hasPermission("courses")) {add("courses");}
+            if (sender.hasPermission("setup")) {add("setup");}
+            if (sender.hasPermission("course")) {add("course");}
+            if (sender.hasPermission("stats")) {add("stats");}
+            if (sender.hasPermission("leave")) {add("leave");}
 
         }};
     }
@@ -279,44 +278,44 @@ public class BetterParkourCMD extends Command {
 
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!handler.hasPerm(sender, "setup")) {return null;}
+                if (!sender.hasPermission("setup")) {return null;}
 
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
-                    if (handler.hasPerm(sender, "setup.wand")) {add("wand");}
-                    if (handler.hasPerm(sender, "setup.toplist")) {add("toplist");}
-                    if (handler.hasPerm(sender, "setup.start")) {add("start");}
-                    if (handler.hasPerm(sender, "setup.end")) {add("end");}
-                    if (handler.hasPerm(sender, "setup.addpoint")) {add("addpoint");}
-                    if (handler.hasPerm(sender, "setup.abort")) {add("abort");}
-                    if (handler.hasPerm(sender, "setup.difficulty")) {add("difficulty");}
-                    if (handler.hasPerm(sender, "setup.info")) {add("info");}
-                    if (handler.hasPerm(sender, "setup.done")) {add("done");}
-                    if (handler.hasPerm(sender, "setup.spawn")) {add("spawn");}
-                    if (handler.hasPerm(sender, "setup.rename")) {add("rename");}
+                    if (sender.hasPermission("setup.wand")) {add("wand");}
+                    if (sender.hasPermission("setup.toplist")) {add("toplist");}
+                    if (sender.hasPermission("setup.start")) {add("start");}
+                    if (sender.hasPermission("setup.end")) {add("end");}
+                    if (sender.hasPermission("setup.addpoint")) {add("addpoint");}
+                    if (sender.hasPermission("setup.abort")) {add("abort");}
+                    if (sender.hasPermission("setup.difficulty")) {add("difficulty");}
+                    if (sender.hasPermission("setup.info")) {add("info");}
+                    if (sender.hasPermission("setup.done")) {add("done");}
+                    if (sender.hasPermission("setup.spawn")) {add("spawn");}
+                    if (sender.hasPermission("setup.rename")) {add("rename");}
                 }}, shorted);
                 Collections.sort(shorted);
                 return shorted;
 
             } else if (args[0].equalsIgnoreCase("course")) {
-                if (!handler.hasPerm(sender, "course")) {return null;}
+                if (!sender.hasPermission("course")) {return null;}
 
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
-                    if (handler.hasPerm(sender, "course.create")) {add("create");}
-                    if (handler.hasPerm(sender, "course.remove")) {add("remove");}
-                    if (handler.hasPerm(sender, "course.edit")) {add("edit");}
+                    if (sender.hasPermission("course.create")) {add("create");}
+                    if (sender.hasPermission("course.remove")) {add("remove");}
+                    if (sender.hasPermission("course.edit")) {add("edit");}
                 }}, shorted);
                 Collections.sort(shorted);
                 return shorted;
 
             } else if (args[0].equalsIgnoreCase("stats")) {
-                if (!handler.hasPerm(sender, "stats")) {return null;}
+                if (!sender.hasPermission("stats")) {return null;}
 
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
-                    if (handler.hasPerm(sender, "stats.save")) {add("save");}
-                    if (handler.hasPerm(sender, "stats.remove")) {add("remove");}
+                    if (sender.hasPermission("stats.save")) {add("save");}
+                    if (sender.hasPermission("stats.remove")) {add("remove");}
                 }}, shorted);
                 Collections.sort(shorted);
                 return shorted;
@@ -326,21 +325,21 @@ public class BetterParkourCMD extends Command {
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!handler.hasPerm(sender, "setup")) {return null;}
+                if (!sender.hasPermission("setup")) {return null;}
 
                 if (args[1].equalsIgnoreCase("difficulty")) {
-                    if (!handler.hasPerm(sender, "setup.difficulty")) {return null;}
+                    if (!sender.hasPermission("setup.difficulty")) {return null;}
                     return Collections.singletonList("<text (use _ as space)>");
 
                 } else if (args[1].equalsIgnoreCase("rename")) {
-                    if (!handler.hasPerm(sender, "setup.rename")) {return null;}
+                    if (!sender.hasPermission("setup.rename")) {return null;}
                     return Collections.singletonList("<text (use _ as space)>");
                 } else {
                     return null;
                 }
             } else if (args[0].equalsIgnoreCase("stats")) {
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!handler.hasPerm(sender, "stats.remove")) {return null;}
+                    if (!sender.hasPermission("stats.remove")) {return null;}
 
                     List<String> shorted = new ArrayList<>();
                     StringUtil.copyPartialMatches(args[2], playerNames(), shorted);
@@ -349,10 +348,10 @@ public class BetterParkourCMD extends Command {
 
                 }
             } else if (args[0].equalsIgnoreCase("course")) {
-                if (!handler.hasPerm(sender, "course")) {return null;}
+                if (!sender.hasPermission("course")) {return null;}
 
                 if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("edit")) {
-                    if (!handler.hasPerm(sender, "course.remove") || !handler.hasPerm(sender, "course.edit")) {return null;}
+                    if (!sender.hasPermission("course.remove") || !sender.hasPermission("course.edit")) {return null;}
 
                     Set<String> keys = yaml.getKeys("courses");
                     if (keys != null) {
@@ -369,7 +368,7 @@ public class BetterParkourCMD extends Command {
                     return Collections.singletonList("<name (use _ as space)>");
 
                 } else if (args[1].equalsIgnoreCase("create")){
-                    if (!handler.hasPerm(sender, "course.create")) {return null;}
+                    if (!sender.hasPermission("course.create")) {return null;}
                     return Collections.singletonList("<name (use _ as space)>");
                 } else {
                     return null;
@@ -378,7 +377,7 @@ public class BetterParkourCMD extends Command {
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("stats")) {
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!handler.hasPerm(sender, "stats.remove")) {return null;}
+                    if (!sender.hasPermission("stats.remove")) {return null;}
 
                     Set<String> keys = yaml.getKeys("courses");
                     if (keys != null) {

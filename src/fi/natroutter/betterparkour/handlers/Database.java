@@ -2,9 +2,9 @@ package fi.natroutter.betterparkour.handlers;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.files.Config;
 import fi.natroutter.natlibs.utilities.MojangAPI;
-import fi.natroutter.betterparkour.Handler;
 import fi.natroutter.betterparkour.objs.Statistic;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.logging.Handler;
 
 public class Database {
 
@@ -28,17 +29,22 @@ public class Database {
         return valid;
     }
 
-    public Database(Handler handler) {
-        this.plugin = handler.getInstance();
-        this.mojangAPI = handler.getMojangAPI();
-        Config.MySQL cfg = handler.getConfig().getMySQL();
+    public Database() {
+        this.plugin = BetterParkour.getInstance();
+        this.mojangAPI = BetterParkour.getMojangAPI();
+        
+        String host = Config.Sql_Host.asString();
+        int port = Config.Sql_Port.asInteger();
+        String user = Config.Sql_User.asString();
+        String pass = Config.Sql_Pass.asString();
+        String database = Config.Sql_Database.asString();
 
-        if (cfg.getHost().length() > 2 && cfg.getPort().toString().length() > 1 && cfg.getDatabase().length() > 2) {
+        if (host.length() > 2 && port > 0 && database.length() > 2) {
             try {
                 this.hikConfig = new HikariConfig();
-                this.hikConfig.setJdbcUrl("jdbc:mysql://" + cfg.getHost() + ":" + cfg.getPort() + "/" + cfg.getDatabase());
-                this.hikConfig.setUsername(cfg.getUser());
-                this.hikConfig.setPassword(cfg.getPass());
+                this.hikConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
+                this.hikConfig.setUsername(user);
+                this.hikConfig.setPassword(pass);
                 this.hikConfig.addDataSourceProperty("cachePrepStmts", "true");
                 this.hikConfig.addDataSourceProperty("prepStmtCacheSize", "250");
                 this.hikConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

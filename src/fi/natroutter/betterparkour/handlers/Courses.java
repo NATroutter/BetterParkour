@@ -1,6 +1,6 @@
 package fi.natroutter.betterparkour.handlers;
 
-import fi.natroutter.betterparkour.Handler;
+import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.objs.Course;
 import fi.natroutter.natlibs.handlers.database.YamlDatabase;
 import fi.natroutter.natlibs.objects.Cuboid;
@@ -9,19 +9,16 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.logging.Handler;
 
 public class Courses {
 
-    private Handler handler;
     private YamlDatabase yaml;
-    private Utilities util;
 
     private ArrayList<Course> courses = new ArrayList<>();
 
-    public Courses(Handler handler) {
-        this.handler = handler;
-        this.yaml = handler.getYaml();
-        this.util = handler.getUtil();
+    public Courses() {
+        this.yaml = BetterParkour.getYaml();
         loadCourses();
     }
 
@@ -50,7 +47,7 @@ public class Courses {
             for (String key : yaml.getKeys("courses")) {
                 UUID id = UUID.fromString(key);
                 if (!validateCourse(id)) {
-                    handler.console("§9[BetterParkour] §7Invalid course in database! §b("+id+")");
+                    BetterParkour.log("§9[BetterParkour] §7Invalid course in database! §b("+id+")");
                     continue;
                 }
 
@@ -68,7 +65,7 @@ public class Courses {
                 List<String> rawChecks = yaml.getStringList("courses." + key, "check");
                 List<Location> checks = new ArrayList<>();
                 for (String line : rawChecks) {
-                    Location loc = util.deserializeLocation(line, '~');
+                    Location loc = Utilities.deserializeLocation(line, '~');
                     if (loc != null) {
                         checks.add(loc);
                     }
