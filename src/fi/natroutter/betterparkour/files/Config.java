@@ -12,11 +12,11 @@ public enum Config implements IConfig {
     Language("Language"),
     InvisibleInCourse("InvisibleInCourse"),
 
-    Sql_Host("Sql.Host"),
-    Sql_Port("Sql.Port"),
-    Sql_User("Sql.Username"),
-    Sql_Pass("Sql.Password"),
-    Sql_Database("Sql.Database"),
+    DB_Host("MongoDB.Host"),
+    DB_Port("MongoDB.Port"),
+    DB_User("MongoDB.Username"),
+    DB_Pass("MongoDB.Password"),
+    DB_Database("MongoDB.Database"),
 
     ;
 

@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 public class MongoConnector {
 
     private JavaPlugin instance;
-    private Logger logger;
 
     @Getter private boolean validConfig;
 
@@ -45,7 +44,6 @@ public class MongoConnector {
 
     public MongoConnector(JavaPlugin instance, MongoConfig config) {
         this.instance = instance;
-        this.logger = instance.getLogger();
         this.config = config;
 
         validConfig = validateConfig();

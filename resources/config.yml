@@ -1,6 +1,6 @@
 Language: en_us
 InvisibleInCourse: true
-Sql:
+MongoDB:
     Host: "localhost"
     Port: 3307
     Username: "root"

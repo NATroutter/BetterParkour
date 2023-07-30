@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import fi.natroutter.betterparkour.BetterParkour;
+import fi.natroutter.betterparkour.files.Config;
 import fi.natroutter.betterparkour.objects.Course;
 import fi.natroutter.betterparkour.objects.Statistic;
 import fi.natroutter.natlibs.objects.MongoConfig;
@@ -21,7 +22,11 @@ public class Database extends MongoConnector {
 
     public Database(JavaPlugin instance) {
         super(instance, new MongoConfig(
-                "BetterParkour","root","toor","localhost",27017
+                Config.DB_Database.asString(),
+                Config.DB_User.asString(),
+                Config.DB_Pass.asString(),
+                Config.DB_Host.asString(),
+                Config.DB_Port.asInteger()
         ));
         registerCollection("stats");
     }
