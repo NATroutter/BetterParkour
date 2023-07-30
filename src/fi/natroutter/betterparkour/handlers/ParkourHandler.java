@@ -2,14 +2,12 @@ package fi.natroutter.betterparkour.handlers;
 
 import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.events.*;
-import fi.natroutter.natlibs.helpers.LangHelper;
-import fi.natroutter.natlibs.utilities.StringHandler;
-import net.kyori.adventure.text.Component;
 import fi.natroutter.betterparkour.files.Config;
 import fi.natroutter.betterparkour.files.Lang;
-import fi.natroutter.betterparkour.objs.ActiveCourse;
-import fi.natroutter.betterparkour.objs.Course;
-import fi.natroutter.betterparkour.objs.Statistic;
+import fi.natroutter.betterparkour.handlers.Database.Database;
+import fi.natroutter.betterparkour.objects.ActiveCourse;
+import fi.natroutter.betterparkour.objects.Course;
+import fi.natroutter.betterparkour.objects.Statistic;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -18,18 +16,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
 
 public class ParkourHandler {
 
-    private StatisticHandler statisticHandler = BetterParkour.getStatisticHandler();
-    private LangHelper lh = BetterParkour.getLangHelper();
-
     public ConcurrentHashMap<UUID, ActiveCourse> active = new ConcurrentHashMap<>();
+    public Database database = BetterParkour.getDatabase();
 
     public ParkourHandler() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(BetterParkour.getInstance(), ()->{
@@ -40,12 +34,12 @@ public class ParkourHandler {
                 long secs = TimeUnit.MILLISECONDS.toSeconds(time);
                 long mills = time - (secs * 1000);
 
-                p.sendActionBar(Lang.ActionBar.asComponent(List.of(
+                p.sendActionBar(Lang.ActionBar.asComponent(
                         Placeholder.parsed("name",ac.getCourse().getName()),
                         Placeholder.parsed("diff",ac.getCourse().getDiff()),
                         Placeholder.parsed("secs",String.valueOf(secs)),
                         Placeholder.parsed("mills",String.valueOf(mills))
-                )));
+                ));
 
                 if (time >= 86400000) { //leaves from parkour if more than 24h (stupid safety feature)
                     leave(p);
@@ -115,12 +109,12 @@ public class ParkourHandler {
         long secs = TimeUnit.MILLISECONDS.toSeconds(time);
         long mills = time - (secs * 1000);
 
-        p.sendMessage(Lang.CourseFinished.asComponent(List.of(
-                Placeholder.parsed("courseName",ac.getCourse().getName()),
+        p.sendMessage(Lang.CourseFinished.asSingleComponent(
+                Placeholder.parsed("course",ac.getCourse().getName()),
                 Placeholder.parsed("diff",ac.getCourse().getDiff()),
                 Placeholder.parsed("secs",String.valueOf(secs)),
                 Placeholder.parsed("mills",String.valueOf(mills))
-        )));
+        ));
 
         for (PotionEffect eff : p.getActivePotionEffects()) {
             p.removePotionEffect(eff.getType());
@@ -130,8 +124,9 @@ public class ParkourHandler {
         Bukkit.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
-            Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), (ac.getEndTime() - ac.getStartTime()));
-            statisticHandler.set(stat);
+            long courseTime = (ac.getEndTime() - ac.getStartTime());
+            Statistic stat = new Statistic(ac.getCourse().getId(), p.getUniqueId(), p.getName(), courseTime);
+            database.save(stat);
         }
     }
 
@@ -166,7 +161,7 @@ public class ParkourHandler {
         if (!ac.getCourse().getArena().contains(p.getLocation())) {
             if (ac.getLastCheck() != null) {
                 p.teleport(ac.getLastCheck());
-                lh.prefix(p, Lang.LeaveInfoMessage);
+                p.sendMessage(Lang.LeaveInfoMessage.prefixed());
             } else {
                 p.teleport(ac.getCourse().getSpawn());
                 active.remove(p.getUniqueId());

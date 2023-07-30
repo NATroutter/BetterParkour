@@ -2,7 +2,7 @@ package fi.natroutter.betterparkour.listeners;
 
 import fi.natroutter.betterparkour.BetterParkour;
 import fi.natroutter.betterparkour.handlers.CourseBuilder;
-import fi.natroutter.betterparkour.items.GItems;
+import fi.natroutter.betterparkour.items.Items;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,8 +11,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.logging.Handler;
 
 public class WandUseListener implements Listener {
 
@@ -25,7 +23,7 @@ public class WandUseListener implements Listener {
             Block block = e.getClickedBlock();
             ItemStack item = e.getItem();
 
-            if (item.isSimilar(GItems.wand())) {
+            if (Items.wand().isSimilar(item)) {
                 if (e.getHand() != EquipmentSlot.HAND) {return;}
                 e.setCancelled(true);
 

@@ -6,4 +6,4 @@ authors: [NATroutter]
 description: Simple parkour plugin
 website: https://NATroutter.net
 depend: [NATLibs]
-softdepend: [HolographicDisplays]
+softdepend: [DecentHolograms]

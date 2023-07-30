@@ -1,13 +1,12 @@
 package fi.natroutter.betterparkour.commands;
 
 import fi.natroutter.betterparkour.BetterParkour;
-import fi.natroutter.betterparkour.handlers.ParkourHandler;
-import fi.natroutter.natlibs.handlers.database.YamlDatabase;
+import fi.natroutter.betterparkour.files.Config;
 import fi.natroutter.betterparkour.files.Lang;
 import fi.natroutter.betterparkour.handlers.CourseBuilder;
-import fi.natroutter.betterparkour.handlers.StatisticHandler;
-import fi.natroutter.betterparkour.objs.Statistic;
-import fi.natroutter.natlibs.helpers.LangHelper;
+import fi.natroutter.betterparkour.handlers.Database.Database;
+import fi.natroutter.betterparkour.handlers.ParkourHandler;
+import fi.natroutter.natlibs.handlers.database.YamlDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,48 +16,52 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.logging.Handler;
 
 public class BetterParkourCMD extends Command {
 
-    private LangHelper lh;
     private CourseBuilder course;
     private YamlDatabase yaml;
     private ParkourHandler parkourHandler;
-    private StatisticHandler statisticHandler;
+    private Database database = BetterParkour.getDatabase();
 
     public BetterParkourCMD() {
         super("BetterParkour");
         this.setAliases(Collections.singletonList("bp"));
-        this.lh = BetterParkour.getLangHelper();
         this.course = BetterParkour.getCourseBuilder();
         this.yaml = BetterParkour.getYaml();
         this.parkourHandler = BetterParkour.getParkourHandler();
-        this.statisticHandler = BetterParkour.getStatisticHandler();
     }
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player p)) {
-            lh.prefix(sender, Lang.OnlyIngame);
+            sender.sendMessage(Lang.OnlyIngame.prefixed());
             return false;
         }
 
         if (args.length == 0) {
-            lh.prefix(p, Lang.WrongCommandUsage);
+            p.sendMessage(Lang.WrongCommandUsage.prefixed());
         } else if (args.length == 1) {
 
             if (args[0].equalsIgnoreCase("help")) {
-                if (!BetterParkour.hasPerm(p, "help")) {return false;}
-                lh.sendList(p, Lang.HelpMessage);
+                if (!BetterParkour.hasPerm(p, "help")) {
+                    return false;
+                }
+                p.sendMessage(Lang.HelpMessage.asSingleComponent());
+
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                if (!BetterParkour.hasPerm(p, "reload")) {return false;}
+                Config.Language.reloadFile();
+                Lang.Prefix.reloadFile();
+                p.sendMessage(Lang.ConfigsReloaded.asComponent());
 
             } else if (args[0].equalsIgnoreCase("leave")) {
                 if (!BetterParkour.hasPerm(p, "leave")) {return false;}
                 if (parkourHandler.inCourse(p)) {
-                    lh.prefix(p, Lang.LeaveMessage);
+                    p.sendMessage(Lang.LeaveMessage.prefixed());
                     parkourHandler.leave(p);
                 } else {
-                    lh.prefix(p, Lang.NotInCourse);
+                    p.sendMessage(Lang.NotInCourse.prefixed());
                 }
 
 
@@ -66,21 +69,8 @@ public class BetterParkourCMD extends Command {
                 if (!BetterParkour.hasPerm(p, "courses")) {return false;}
                 course.printCourses(p);
 
-            } else if (args[0].equalsIgnoreCase("debug")) {
-                if (!BetterParkour.hasPerm(p, "debug")) {return false;}
-                for (Map.Entry<String, Statistic> c1 : statisticHandler.statisticCache.entrySet()) {
-                    p.sendMessage("Cache: - " + c1.getKey() + " - " + c1.getValue().toString());
-                }
-
-                for (Map.Entry<UUID, List<Statistic>> c1 : statisticHandler.statisticTop.entrySet()) {
-                    p.sendMessage("List: - " + c1.getKey());
-                    for (Statistic stats : c1.getValue()) {
-                        p.sendMessage("  - " + stats.toString());
-                    }
-                }
-
             } else {
-                lh.prefix(p, Lang.InvalidArgs);
+                p.sendMessage(Lang.InvalidArgs.prefixed());
             }
 
         } else if (args.length == 2) {
@@ -127,27 +117,25 @@ public class BetterParkourCMD extends Command {
                     course.setSpawn(p, p.getLocation());
 
                 } else {
-                    lh.prefix(p, Lang.InvalidArgs);
+                    p.sendMessage(Lang.InvalidArgs.prefixed());
                 }
 
             } else if (args[0].equalsIgnoreCase("stats")) {
                 if (!BetterParkour.hasPerm(p, "stats")) {return false;}
 
-                if (args[1].equalsIgnoreCase("save")) {
-                    if (!BetterParkour.hasPerm(p, "stats.save")) {
+                if (args[1].equalsIgnoreCase("reload")) {
+                    if (!BetterParkour.hasPerm(p, "stats.reload")) {
                         return false;
                     }
-
-                    BetterParkour.getStatisticHandler().save(true);
                     BetterParkour.getTopHologramHandler().loadHolograms();
-                    lh.prefix(p, Lang.StatisticsSaved);
+                    p.sendMessage(Lang.StatisticsReloaded.prefixed());
 
                 } else {
-                    lh.prefix(p, Lang.InvalidArgs);
+                    p.sendMessage(Lang.InvalidArgs.prefixed());
                 }
 
             } else {
-                lh.prefix(p, Lang.InvalidArgs);
+                p.sendMessage(Lang.InvalidArgs.prefixed());
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("setup")) {
@@ -170,7 +158,7 @@ public class BetterParkourCMD extends Command {
                     course.setName(p, name);
 
                 } else {
-                    lh.prefix(p, Lang.InvalidArgs);
+                    p.sendMessage(Lang.InvalidArgs.prefixed());
                 }
             } else if (args[0].equalsIgnoreCase("course")) {
                 if (!BetterParkour.hasPerm(p, "course")) {
@@ -199,11 +187,11 @@ public class BetterParkourCMD extends Command {
                     course.edit(p, name);
 
                 } else {
-                    lh.prefix(p, Lang.InvalidArgs);
+                    p.sendMessage(Lang.InvalidArgs.prefixed());
                 }
 
             } else {
-                lh.prefix(p, Lang.InvalidArgs);
+                p.sendMessage(Lang.InvalidArgs.prefixed());
             }
         } else if (args.length == 4) {
 
@@ -215,11 +203,15 @@ public class BetterParkourCMD extends Command {
 
                     OfflinePlayer ofp = Bukkit.getOfflinePlayerIfCached(args[2]);
                     if (ofp == null) {
-                        lh.prefix(p, Lang.InvalidPlayer);
+                        p.sendMessage(Lang.InvalidPlayer.prefixed());
                         return false;
                     }
 
                     Set<String> keys = yaml.getKeys("courses");
+                    if (keys == null) {
+                        p.sendMessage(Lang.CourseList_NoCourses.prefixed());
+                        return false;
+                    }
                     String courseName = args[3].replaceAll("_", " ");
                     UUID selected = null;
                     for (String key : keys) {
@@ -228,21 +220,19 @@ public class BetterParkourCMD extends Command {
                         }
                     }
                     if (selected == null) {
-                        lh.prefix(p, Lang.InvalidCourse);
+                        p.sendMessage(Lang.InvalidCourse.prefixed());
                         return false;
                     }
 
-
-                    BetterParkour.getStatisticHandler().remove(ofp.getUniqueId(), selected);
-                    BetterParkour.getStatisticHandler().save(true);
+                    database.deleteStats(ofp.getUniqueId(), selected);
                     BetterParkour.getTopHologramHandler().loadHolograms();
-                    lh.prefix(p, Lang.StatisticsRemoved);
+                    p.sendMessage(Lang.StatisticsRemoved.prefixed());
                 }
 
             }
 
         } else {
-            lh.prefix(p, Lang.TooManyArguments);
+            p.sendMessage(Lang.TooManyArguments.prefixed());
         }
         return false;
     }
@@ -255,6 +245,7 @@ public class BetterParkourCMD extends Command {
             if (sender.hasPermission("course")) {add("course");}
             if (sender.hasPermission("stats")) {add("stats");}
             if (sender.hasPermission("leave")) {add("leave");}
+            if (sender.hasPermission("reload")) {add("reload");}
 
         }};
     }
@@ -314,7 +305,7 @@ public class BetterParkourCMD extends Command {
 
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
-                    if (sender.hasPermission("stats.save")) {add("save");}
+                    if (sender.hasPermission("stats.reload")) {add("reload");}
                     if (sender.hasPermission("stats.remove")) {add("remove");}
                 }}, shorted);
                 Collections.sort(shorted);

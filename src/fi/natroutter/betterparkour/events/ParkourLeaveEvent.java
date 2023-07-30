@@ -1,6 +1,6 @@
 package fi.natroutter.betterparkour.events;
 
-import fi.natroutter.betterparkour.objs.Course;
+import fi.natroutter.betterparkour.objects.Course;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

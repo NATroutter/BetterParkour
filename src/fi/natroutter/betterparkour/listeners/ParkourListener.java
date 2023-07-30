@@ -1,11 +1,10 @@
 package fi.natroutter.betterparkour.listeners;
 
 import fi.natroutter.betterparkour.BetterParkour;
-import fi.natroutter.betterparkour.handlers.ParkourHandler;
-import fi.natroutter.betterparkour.objs.Course;
 import fi.natroutter.betterparkour.files.Lang;
 import fi.natroutter.betterparkour.handlers.Courses;
-import fi.natroutter.natlibs.helpers.LangHelper;
+import fi.natroutter.betterparkour.handlers.ParkourHandler;
+import fi.natroutter.betterparkour.objects.Course;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,14 +17,11 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Handler;
 
 public class ParkourListener implements Listener {
 
     private Courses courses = BetterParkour.getCourses();
     private ParkourHandler parkourHandler = BetterParkour.getParkourHandler();
-    private LangHelper lh = BetterParkour.getLangHelper();
-
     public HashMap<UUID, Long> cooldown = new HashMap<>();
 
 
@@ -58,7 +54,7 @@ public class ParkourListener implements Listener {
         if (parkourHandler.inCourse(p)) {
             if (!cmd.startsWith("/bp") && !cmd.startsWith("/betterparkour")) {
                 e.setCancelled(true);
-                lh.prefix(p, Lang.CantWhileInCourse);
+                p.sendMessage(Lang.CantWhileInCourse.prefixed());
             }
         }
     }
@@ -70,12 +66,12 @@ public class ParkourListener implements Listener {
         }
         if (parkourHandler.inCourse(p)) {
             e.setCancelled(true);
-            lh.prefix(p, Lang.CantWhileInCourse);
+            p.sendMessage(Lang.CantWhileInCourse.prefixed());
         } else {
             if (e.getVehicle().getVehicle() instanceof Player v) {
                 if (parkourHandler.inCourse(v)) {
                     e.setCancelled(true);
-                    lh.prefix(p, Lang.CantWhileInCourse);
+                    p.sendMessage(Lang.CantWhileInCourse.prefixed());
                 }
             }
         }
@@ -88,6 +84,9 @@ public class ParkourListener implements Listener {
         if (e.getAction() == Action.PHYSICAL) {
             if (!e.hasBlock() || e.getClickedBlock() == null) {return;}
             Location plate = e.getClickedBlock().getLocation();
+
+            Course course = courses.getCourse(p);
+            if (course == null) {return;}
             e.setCancelled(true);
 
             if(cooldown.containsKey(p.getUniqueId())) {
@@ -97,9 +96,6 @@ public class ParkourListener implements Listener {
                 }
             }
             cooldown.put(p.getUniqueId(), System.currentTimeMillis());
-
-            Course course = courses.getCourse(p);
-            if (course == null) {return;}
 
             if (plate.equals(course.getStart())) {
                 parkourHandler.start(p, course);
@@ -111,7 +107,7 @@ public class ParkourListener implements Listener {
         } else {
             if (parkourHandler.inCourse(p)) {
                 e.setCancelled(true);
-                lh.prefix(p, Lang.CantWhileInCourse);
+                p.sendMessage(Lang.CantWhileInCourse.prefixed());
             }
         }
 

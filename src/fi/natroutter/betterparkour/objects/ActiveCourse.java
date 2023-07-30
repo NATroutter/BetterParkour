@@ -1,4 +1,4 @@
-package fi.natroutter.betterparkour.objs;
+package fi.natroutter.betterparkour.objects;
 
 import org.bukkit.Location;
 

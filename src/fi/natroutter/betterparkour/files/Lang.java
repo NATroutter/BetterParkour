@@ -37,7 +37,7 @@ public enum Lang implements ILang {
     CourseNotGood("CourseNotGood"),
     CourseCreatingAborted("CourseCreatingAborted"),
     CourseRemoved("CourseRemoved"),
-    StatisticsSaved("StatisticsSaved"),
+    StatisticsReloaded("StatisticsReloaded"),
     CantWhileInCourse("CantWhileInCourse"),
     LeaveMessage("LeaveMessage"),
     LeaveInfoMessage("LeaveInfoMessage"),
@@ -47,6 +47,8 @@ public enum Lang implements ILang {
     InvalidPlayer("InvalidPlayer"),
     StatisticsRemoved("StatisticsRemoved"),
     InvalidCourse("InvalidCourse"),
+    ConfigsReloaded("ConfigsReloaded"),
+
     CourseFinished("CourseFinished"),
     Wand_Name("Wand.Name"),
     Wand_Lore("Wand.Lore"),
@@ -82,6 +84,11 @@ public enum Lang implements ILang {
     @Override
     public Language lang() {
         return Language.getFromKey(Config.Language.asString());
+    }
+
+    @Override
+    public ILang prefix() {
+        return Prefix;
     }
 
     @Override

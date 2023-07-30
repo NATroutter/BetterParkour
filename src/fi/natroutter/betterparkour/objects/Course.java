@@ -1,10 +1,9 @@
-package fi.natroutter.betterparkour.objs;
+package fi.natroutter.betterparkour.objects;
 
 import fi.natroutter.natlibs.objects.Cuboid;
 import org.bukkit.Location;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class Course {

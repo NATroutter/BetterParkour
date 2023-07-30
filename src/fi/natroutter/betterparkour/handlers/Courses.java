@@ -1,7 +1,7 @@
 package fi.natroutter.betterparkour.handlers;
 
 import fi.natroutter.betterparkour.BetterParkour;
-import fi.natroutter.betterparkour.objs.Course;
+import fi.natroutter.betterparkour.objects.Course;
 import fi.natroutter.natlibs.handlers.database.YamlDatabase;
 import fi.natroutter.natlibs.objects.Cuboid;
 import fi.natroutter.natlibs.utilities.Utilities;
@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.logging.Handler;
 
 public class Courses {
 
@@ -44,7 +43,7 @@ public class Courses {
         Set<String> keys = yaml.getKeys("courses");
         if (keys == null) {return; }
         if (keys.size() > 0) {
-            for (String key : yaml.getKeys("courses")) {
+            for (String key : keys) {
                 UUID id = UUID.fromString(key);
                 if (!validateCourse(id)) {
                     BetterParkour.log("§9[BetterParkour] §7Invalid course in database! §b("+id+")");

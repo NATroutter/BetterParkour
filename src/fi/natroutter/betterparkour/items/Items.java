@@ -4,9 +4,7 @@ import fi.natroutter.natlibs.objects.BaseItem;
 import fi.natroutter.betterparkour.files.Lang;
 import org.bukkit.Material;
 
-import java.util.logging.Handler;
-
-public class GItems {
+public class Items {
 
     public static BaseItem wand() {
         BaseItem item = new BaseItem(Material.STICK);
