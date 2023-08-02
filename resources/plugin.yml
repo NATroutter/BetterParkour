@@ -1,6 +1,6 @@
 main: fi.natroutter.betterparkour.BetterParkour
 name: BetterParkour
-version: '2.0.1'
+version: '2.0.2'
 api-version: 1.18
 authors: [NATroutter]
 description: Simple parkour plugin
