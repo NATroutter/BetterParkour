@@ -44,19 +44,19 @@ public class BetterParkourCMD extends Command {
         } else if (args.length == 1) {
 
             if (args[0].equalsIgnoreCase("help")) {
-                if (!BetterParkour.hasPerm(p, "help")) {
+                if (!BetterParkour.hasPerm(p, "betterparkour.help")) {
                     return false;
                 }
                 p.sendMessage(Lang.HelpMessage.asSingleComponent());
 
             } else if (args[0].equalsIgnoreCase("reload")) {
-                if (!BetterParkour.hasPerm(p, "reload")) {return false;}
+                if (!BetterParkour.hasPerm(p, "betterparkour.reload")) {return false;}
                 Config.Language.reloadFile();
                 Lang.Prefix.reloadFile();
                 p.sendMessage(Lang.ConfigsReloaded.asComponent());
 
             } else if (args[0].equalsIgnoreCase("leave")) {
-                if (!BetterParkour.hasPerm(p, "leave")) {return false;}
+                if (!BetterParkour.hasPerm(p, "betterparkour.leave")) {return false;}
                 if (parkourHandler.inCourse(p)) {
                     p.sendMessage(Lang.LeaveMessage.prefixed());
                     parkourHandler.leave(p);
@@ -66,7 +66,7 @@ public class BetterParkourCMD extends Command {
 
 
             } else if (args[0].equalsIgnoreCase("courses")) {
-                if (!BetterParkour.hasPerm(p, "courses")) {return false;}
+                if (!BetterParkour.hasPerm(p, "betterparkour.courses")) {return false;}
                 course.printCourses(p);
 
             } else {
@@ -76,44 +76,44 @@ public class BetterParkourCMD extends Command {
         } else if (args.length == 2) {
 
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!BetterParkour.hasPerm(p, "setup")) {
+                if (!BetterParkour.hasPerm(p, "betterparkour.setup")) {
                     return false;
                 }
 
                 if (args[1].equalsIgnoreCase("wand")) {
-                    if (!BetterParkour.hasPerm(p, "setup.wand")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.wand")) {return false;}
                     course.giveWand(p);
 
                 } else if (args[1].equalsIgnoreCase("start")) {
-                    if (!BetterParkour.hasPerm(p, "setup.start")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.start")) {return false;}
                     course.setStart(p);
 
                 } else if (args[1].equalsIgnoreCase("toplist")) {
-                    if (!BetterParkour.hasPerm(p, "setup.toplist")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.toplist")) {return false;}
                     course.setTopList(p, p.getLocation());
 
                 } else if (args[1].equalsIgnoreCase("end")) {
-                    if (!BetterParkour.hasPerm(p, "setup.end")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.end")) {return false;}
                     course.setEnd(p);
 
                 } else if (args[1].equalsIgnoreCase("addpoint")) {
-                    if (!BetterParkour.hasPerm(p, "setup.addpoint")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.addpoint")) {return false;}
                     course.addCheckpoint(p);
 
                 } else if (args[1].equalsIgnoreCase("abort")) {
-                    if (!BetterParkour.hasPerm(p, "setup.abort")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.abort")) {return false;}
                     course.abort(p);
 
                 } else if (args[1].equalsIgnoreCase("info")) {
-                    if (!BetterParkour.hasPerm(p, "setup.info")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.info")) {return false;}
                     course.printValidation(p);
 
                 } else if (args[1].equalsIgnoreCase("done")) {
-                    if (!BetterParkour.hasPerm(p, "setup.done")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.done")) {return false;}
                     course.save(p);
 
                 } else if (args[1].equalsIgnoreCase("spawn")) {
-                    if (!BetterParkour.hasPerm(p, "setup.spawn")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.spawn")) {return false;}
                     course.setSpawn(p, p.getLocation());
 
                 } else {
@@ -121,10 +121,10 @@ public class BetterParkourCMD extends Command {
                 }
 
             } else if (args[0].equalsIgnoreCase("stats")) {
-                if (!BetterParkour.hasPerm(p, "stats")) {return false;}
+                if (!BetterParkour.hasPerm(p, "betterparkour.stats")) {return false;}
 
                 if (args[1].equalsIgnoreCase("reload")) {
-                    if (!BetterParkour.hasPerm(p, "stats.reload")) {
+                    if (!BetterParkour.hasPerm(p, "betterparkour.stats.reload")) {
                         return false;
                     }
                     BetterParkour.getTopHologramHandler().loadHolograms();
@@ -139,19 +139,19 @@ public class BetterParkourCMD extends Command {
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!BetterParkour.hasPerm(p, "setup")) {
+                if (!BetterParkour.hasPerm(p, "betterparkour.setup")) {
                     return false;
                 }
 
                 if (args[1].equalsIgnoreCase("difficulty")) {
-                    if (!BetterParkour.hasPerm(p, "setup.difficulty")) {
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.difficulty")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.setDiff(p, name);
 
                 } else if (args[1].equalsIgnoreCase("rename")) {
-                    if (!BetterParkour.hasPerm(p, "setup.rename")) {
+                    if (!BetterParkour.hasPerm(p, "betterparkour.setup.rename")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
@@ -161,26 +161,26 @@ public class BetterParkourCMD extends Command {
                     p.sendMessage(Lang.InvalidArgs.prefixed());
                 }
             } else if (args[0].equalsIgnoreCase("course")) {
-                if (!BetterParkour.hasPerm(p, "course")) {
+                if (!BetterParkour.hasPerm(p, "betterparkour.course")) {
                     return false;
                 }
 
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!BetterParkour.hasPerm(p, "course.remove")) {
+                    if (!BetterParkour.hasPerm(p, "betterparkour.course.remove")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.remove(p, name);
 
                 } else if (args[1].equalsIgnoreCase("create")) {
-                    if (!BetterParkour.hasPerm(p, "course.create")) {
+                    if (!BetterParkour.hasPerm(p, "betterparkour.course.create")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
                     course.create(p, name);
 
                 } else if (args[1].equalsIgnoreCase("edit")) {
-                    if (!BetterParkour.hasPerm(p, "course.edit")) {
+                    if (!BetterParkour.hasPerm(p, "betterparkour.course.edit")) {
                         return false;
                     }
                     String name = args[2].replaceAll("_", " ");
@@ -196,10 +196,10 @@ public class BetterParkourCMD extends Command {
         } else if (args.length == 4) {
 
             if (args[0].equalsIgnoreCase("stats")) {
-                if (!BetterParkour.hasPerm(p, "stats")) {return false;}
+                if (!BetterParkour.hasPerm(p, "betterparkour.stats")) {return false;}
 
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!BetterParkour.hasPerm(p, "stats.remove")) {return false;}
+                    if (!BetterParkour.hasPerm(p, "betterparkour.stats.remove")) {return false;}
 
                     OfflinePlayer ofp = Bukkit.getOfflinePlayerIfCached(args[2]);
                     if (ofp == null) {
@@ -239,13 +239,13 @@ public class BetterParkourCMD extends Command {
 
     private List<String> commandArgs(CommandSender sender) {
         return new ArrayList<>(){{
-            if (sender.hasPermission("help")) {add("help");}
-            if (sender.hasPermission("courses")) {add("courses");}
-            if (sender.hasPermission("setup")) {add("setup");}
-            if (sender.hasPermission("course")) {add("course");}
-            if (sender.hasPermission("stats")) {add("stats");}
-            if (sender.hasPermission("leave")) {add("leave");}
-            if (sender.hasPermission("reload")) {add("reload");}
+            if (sender.hasPermission("betterparkour.help")) {add("help");}
+            if (sender.hasPermission("betterparkour.courses")) {add("courses");}
+            if (sender.hasPermission("betterparkour.setup")) {add("setup");}
+            if (sender.hasPermission("betterparkour.course")) {add("course");}
+            if (sender.hasPermission("betterparkour.stats")) {add("stats");}
+            if (sender.hasPermission("betterparkour.leave")) {add("leave");}
+            if (sender.hasPermission("betterparkour.reload")) {add("reload");}
 
         }};
     }
@@ -269,44 +269,44 @@ public class BetterParkourCMD extends Command {
 
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!sender.hasPermission("setup")) {return null;}
+                if (!sender.hasPermission("betterparkour.setup")) {return null;}
 
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
-                    if (sender.hasPermission("setup.wand")) {add("wand");}
-                    if (sender.hasPermission("setup.toplist")) {add("toplist");}
-                    if (sender.hasPermission("setup.start")) {add("start");}
-                    if (sender.hasPermission("setup.end")) {add("end");}
-                    if (sender.hasPermission("setup.addpoint")) {add("addpoint");}
-                    if (sender.hasPermission("setup.abort")) {add("abort");}
-                    if (sender.hasPermission("setup.difficulty")) {add("difficulty");}
-                    if (sender.hasPermission("setup.info")) {add("info");}
-                    if (sender.hasPermission("setup.done")) {add("done");}
-                    if (sender.hasPermission("setup.spawn")) {add("spawn");}
-                    if (sender.hasPermission("setup.rename")) {add("rename");}
+                    if (sender.hasPermission("betterparkour.setup.wand")) {add("wand");}
+                    if (sender.hasPermission("betterparkour.setup.toplist")) {add("toplist");}
+                    if (sender.hasPermission("betterparkour.setup.start")) {add("start");}
+                    if (sender.hasPermission("betterparkour.setup.end")) {add("end");}
+                    if (sender.hasPermission("betterparkour.setup.addpoint")) {add("addpoint");}
+                    if (sender.hasPermission("betterparkour.setup.abort")) {add("abort");}
+                    if (sender.hasPermission("betterparkour.setup.difficulty")) {add("difficulty");}
+                    if (sender.hasPermission("betterparkour.setup.info")) {add("info");}
+                    if (sender.hasPermission("betterparkour.setup.done")) {add("done");}
+                    if (sender.hasPermission("betterparkour.setup.spawn")) {add("spawn");}
+                    if (sender.hasPermission("betterparkour.setup.rename")) {add("rename");}
                 }}, shorted);
                 Collections.sort(shorted);
                 return shorted;
 
             } else if (args[0].equalsIgnoreCase("course")) {
-                if (!sender.hasPermission("course")) {return null;}
+                if (!sender.hasPermission("betterparkour.course")) {return null;}
 
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
-                    if (sender.hasPermission("course.create")) {add("create");}
-                    if (sender.hasPermission("course.remove")) {add("remove");}
-                    if (sender.hasPermission("course.edit")) {add("edit");}
+                    if (sender.hasPermission("betterparkour.course.create")) {add("create");}
+                    if (sender.hasPermission("betterparkour.course.remove")) {add("remove");}
+                    if (sender.hasPermission("betterparkour.course.edit")) {add("edit");}
                 }}, shorted);
                 Collections.sort(shorted);
                 return shorted;
 
             } else if (args[0].equalsIgnoreCase("stats")) {
-                if (!sender.hasPermission("stats")) {return null;}
+                if (!sender.hasPermission("betterparkour.stats")) {return null;}
 
                 List<String> shorted = new ArrayList<>();
                 StringUtil.copyPartialMatches(args[1], new ArrayList<>(){{
-                    if (sender.hasPermission("stats.reload")) {add("reload");}
-                    if (sender.hasPermission("stats.remove")) {add("remove");}
+                    if (sender.hasPermission("betterparkour.stats.reload")) {add("reload");}
+                    if (sender.hasPermission("betterparkour.stats.remove")) {add("remove");}
                 }}, shorted);
                 Collections.sort(shorted);
                 return shorted;
@@ -316,21 +316,21 @@ public class BetterParkourCMD extends Command {
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!sender.hasPermission("setup")) {return null;}
+                if (!sender.hasPermission("betterparkour.setup")) {return null;}
 
                 if (args[1].equalsIgnoreCase("difficulty")) {
-                    if (!sender.hasPermission("setup.difficulty")) {return null;}
+                    if (!sender.hasPermission("betterparkour.setup.difficulty")) {return null;}
                     return Collections.singletonList("<text (use _ as space)>");
 
                 } else if (args[1].equalsIgnoreCase("rename")) {
-                    if (!sender.hasPermission("setup.rename")) {return null;}
+                    if (!sender.hasPermission("betterparkour.setup.rename")) {return null;}
                     return Collections.singletonList("<text (use _ as space)>");
                 } else {
                     return null;
                 }
             } else if (args[0].equalsIgnoreCase("stats")) {
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!sender.hasPermission("stats.remove")) {return null;}
+                    if (!sender.hasPermission("betterparkour.stats.remove")) {return null;}
 
                     List<String> shorted = new ArrayList<>();
                     StringUtil.copyPartialMatches(args[2], playerNames(), shorted);
@@ -339,10 +339,10 @@ public class BetterParkourCMD extends Command {
 
                 }
             } else if (args[0].equalsIgnoreCase("course")) {
-                if (!sender.hasPermission("course")) {return null;}
+                if (!sender.hasPermission("betterparkour.course")) {return null;}
 
                 if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("edit")) {
-                    if (!sender.hasPermission("course.remove") || !sender.hasPermission("course.edit")) {return null;}
+                    if (!sender.hasPermission("betterparkour.course.remove") || !sender.hasPermission("betterparkour.course.edit")) {return null;}
 
                     Set<String> keys = yaml.getKeys("courses");
                     if (keys != null) {
@@ -359,7 +359,7 @@ public class BetterParkourCMD extends Command {
                     return Collections.singletonList("<name (use _ as space)>");
 
                 } else if (args[1].equalsIgnoreCase("create")){
-                    if (!sender.hasPermission("course.create")) {return null;}
+                    if (!sender.hasPermission("betterparkour.course.create")) {return null;}
                     return Collections.singletonList("<name (use _ as space)>");
                 } else {
                     return null;
@@ -368,7 +368,7 @@ public class BetterParkourCMD extends Command {
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("stats")) {
                 if (args[1].equalsIgnoreCase("remove")) {
-                    if (!sender.hasPermission("stats.remove")) {return null;}
+                    if (!sender.hasPermission("betterparkour.stats.remove")) {return null;}
 
                     Set<String> keys = yaml.getKeys("courses");
                     if (keys != null) {
